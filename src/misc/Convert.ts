@@ -1,4 +1,4 @@
-import { IndexPageQueries, IndexPageState } from "@/pages/_index/types"
+import { IndexPageQueries, IndexPageState } from "@/components/_index/types"
 import { SQLTest, SQLTestAnswers, Test, TestAnswers } from "@/types/SQLTypes"
 import { Utils } from "./Utils"
 

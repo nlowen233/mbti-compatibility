@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { QueryResult, db } from '@vercel/postgres'
 import { APIRes } from '@/types/misc'
-import { IndexPageState } from '@/pages/_index/types'
+import { IndexPageState } from '@/components/_index/types'
 import { UserProfile} from '@auth0/nextjs-auth0/client'
 import { SQL } from '@/misc/SQL'
 import { Constants } from '@/misc/Constants'

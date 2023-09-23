@@ -2,9 +2,9 @@ import axios, { AxiosError, AxiosResponse } from 'axios'
 import { APIRes, IDReq } from '../types/misc'
 import { Constants } from './Constants'
 import { Utils } from './Utils'
-import { IndexPageState } from '@/pages/_index/types'
-import { UserProfile} from '@auth0/nextjs-auth0/client'
-import { SQLTest, SQLTestAnswers } from '@/types/SQLTypes'
+import { IndexPageState } from '@/components/_index/types'
+import { UserProfile } from '@auth0/nextjs-auth0/client'
+import { Question, SQLTest, SQLTestAnswers } from '@/types/SQLTypes'
 
 export type Options<Req, Query> = {
   method?: 'POST' | 'GET'
@@ -55,10 +55,13 @@ async function createAPIFunction<Res, Req = {}, Query = {}>({
   }
 }
 
-const loginStartTest = (req:Partial<IndexPageState&UserProfile>) => createAPIFunction<SQLTest>({ route: '/api/loginStartTest' })
-const getAnswersByTestID = (req:IDReq) => createAPIFunction<SQLTestAnswers>({ route: '/api/loginStartTest' })
+const loginStartTest = (req: Partial<IndexPageState & UserProfile>) =>
+  createAPIFunction<SQLTest>({ route: '/api/loginStartTest', body: req, method: 'POST' })
+const getAnswersByTestID = (req: IDReq) => createAPIFunction<SQLTestAnswers>({ route: '/api/tests/get', body: req, method: 'POST' })
+const updateQuestion = (req: Partial<Question>) => createAPIFunction({ route: '/api/questions/update', body: req, method: 'POST' })
 
 export const API = {
-    loginStartTest,
-    getAnswersByTestID
+  loginStartTest,
+  getAnswersByTestID,
+  updateQuestion
 }

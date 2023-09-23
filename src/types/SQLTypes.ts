@@ -34,3 +34,26 @@ export const enum TestStatus {
 export type SQLError = {
   message?: string
 }
+
+export type SQLQuestion = {
+    id: string
+    scores: string|null
+    text: string|null
+}
+
+export type Question = {
+    id: string
+    scores: Scores
+    text: string
+}
+
+export type Scores = {
+    Ni: number
+    Ne: number
+    Ti: number
+    Te: number
+    Fe: number
+    Fi: number
+    Si: number
+    Se: number
+}
