@@ -1,5 +1,5 @@
 import { IndexPageQueries, IndexPageState } from "@/components/_index/types"
-import { SQLTest, SQLTestAnswers, Test, TestAnswers } from "@/types/SQLTypes"
+import { Question, SQLQuestion, SQLTest, SQLTestAnswers, Test, TestAnswers } from "@/types/SQLTypes"
 import { Utils } from "./Utils"
 
 const indexStateToQueryParams = (state:IndexPageState) =>{
@@ -31,8 +31,15 @@ const sqlToTestAnswers = ({answers}:SQLTestAnswers) : Partial<TestAnswers> => ({
     answers: Utils.parsedJSONOrUndefined(answers),
 })
 
+const sqlToQuestion = (q:SQLQuestion) : Partial<Question> =>({
+    id: `${q.id}`,
+    scores: Utils.parsedJSONOrUndefined(q.scores),
+    text: Utils.fromSQLString(q.text)
+})
+
 export const Convert = {
     indexStateToQueryParams,
     sqlToTest,
-    sqlToTestAnswers
+    sqlToTestAnswers,
+    sqlToQuestion
 }

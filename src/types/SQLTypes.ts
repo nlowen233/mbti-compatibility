@@ -36,7 +36,7 @@ export type SQLError = {
 }
 
 export type SQLQuestion = {
-    id: string
+    id: number
     scores: string|null
     text: string|null
 }

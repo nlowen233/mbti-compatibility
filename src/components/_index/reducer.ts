@@ -1,6 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable default-case */
-
 import { IndexPageAction, IndexPageState} from './types';
 
 const INIT_STATE = (): IndexPageState => ({

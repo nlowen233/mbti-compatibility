@@ -44,4 +44,5 @@ export const Constants = {
     unknownError: 'Unexpected error occured',
     unknownSQLError: 'SQL returned error with no message',
     developmentHost: process.env.NEXT_PUBLIC_DEVELOPMENT_HOST,
+    rolesNamespace: 'https://mbti-compatibility.com/roles'
 }

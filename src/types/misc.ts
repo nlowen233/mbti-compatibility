@@ -21,3 +21,5 @@ export type ProgressStatus =
 export type IDReq = {
   id: string
 }
+
+export type RadioButtonOrder = 1|2|3|4|5|6|7

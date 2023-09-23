@@ -1,4 +1,3 @@
-import Head from 'next/head'
 import { useTheme, Typography, Box, Button } from '@mui/material'
 import { MainWrapper } from '@/components/MainWrapper'
 import { useReducer } from 'react'
@@ -14,13 +13,14 @@ import { API } from '@/misc/API'
 import { SessionContext } from '@/contexts/SessionContext'
 import { PopUpContext } from '@/contexts/PopUpContext'
 import { Storage } from '@/misc/Storage'
+import { Head } from '@/components/Head'
 
 export default function Home() {
   const router = useRouter()
   const { palette } = useTheme()
-  const { user } = useContext(UserContext)
-  const {setTestToken} = useContext(SessionContext)
-  const {pushPopUpMessage} = useContext(PopUpContext)
+  const { user,isLoading } = useContext(UserContext)
+  const { setTestToken } = useContext(SessionContext)
+  const { pushPopUpMessage } = useContext(PopUpContext)
   const [state, dispatch] = useReducer(IndexPageReducer.reducer, IndexPageReducer.INIT_STATE())
   const query = router.query as IndexPageQueryDictionary
   const buttonDisabled = !state.age || !state.expectedResult || !state.gender || !state.mbtiType
@@ -34,9 +34,9 @@ export default function Home() {
 
   const onStartTest = async () => {
     const testRes = await API.loginStartTest({ ...state, ...user })
-    if(testRes.err){
-      pushPopUpMessage({message:testRes.message||Constants.unknownError,title:'Could not start test',type:'error'})
-    } else{
+    if (testRes.err) {
+      pushPopUpMessage({ message: testRes.message || Constants.unknownError, title: 'Could not start test', type: 'error' })
+    } else {
       const token = testRes.res?.id as string
       setTestToken(token)
       Storage.storeToken(token)
@@ -62,12 +62,7 @@ export default function Home() {
 
   return (
     <>
-      <Head>
-        <title>MBTI Compatibility</title>
-        <meta name="Find your MBTI match" content="Home screen, find who you are compatible with" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+      <Head/>
       <MainWrapper>
         <div
           style={{
