@@ -2,6 +2,7 @@ import { Head } from '@/components/Head'
 import { MainWrapper } from '@/components/MainWrapper'
 import { ProgressBar } from '@/components/ProgressBar'
 import { SelectableQuestion } from '@/components/SelectableQuestion'
+import { TestPageUtils } from '@/components/_test/misc'
 import { TestPageReducer } from '@/components/_test/reducer'
 import { LoadingOverlayContext } from '@/contexts/LoadingOverlayContext'
 import { PopUpContext } from '@/contexts/PopUpContext'
@@ -10,6 +11,7 @@ import { useMountlessEffect } from '@/hooks/useMountlessEffect'
 import { API } from '@/misc/API'
 import { Constants } from '@/misc/Constants'
 import { Convert } from '@/misc/Convert'
+import { Paths } from '@/misc/Paths'
 import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
 import { SQLQuestion, TestStatus } from '@/types/SQLTypes'
@@ -20,6 +22,7 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useReducer, useState } from 'react'
 import { animateScroll } from 'react-scroll'
+import { WritingProgressState } from './api/tests/types'
 
 const PAGINATE_ON = 10
 
@@ -28,6 +31,7 @@ type Props = APIRes<SQLQuestion[]>
 export const getServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
   const client = await db.connect()
   const res = await SQL.query<SQLQuestion>(client, SQLQueries.getQuestions)
+  client.release()
   return {
     props: res,
   }
@@ -37,13 +41,14 @@ export default function Test({ err, message, res }: Props) {
   const router = useRouter()
   const [state, dispatch] = useReducer(TestPageReducer.reducer, TestPageReducer.INIT_STATE())
   const [page, setPage] = useState(0)
+  const [writingProgressState, setWritingProgressState] = useState<WritingProgressState>('no_need_to_check')
   const [isLoading, setIsLoading] = useState(false)
   const { testToken, savedProgress } = useContext(SessionContext)
   const { status } = useContext(SessionContext)
   const { pushPopUpMessage } = useContext(PopUpContext)
   const { toggle } = useContext(LoadingOverlayContext)
 
-  const questions = res?.map(Convert.sqlToQuestion)
+  const questions = res?.map(Convert.sqlToQuestion) || []
   const paginatedQuestions = Array.from(
     { length: Math.ceil((questions?.length || 0) / PAGINATE_ON) },
     (_, index) => questions?.slice(index * PAGINATE_ON, index * PAGINATE_ON + PAGINATE_ON),
@@ -85,15 +90,29 @@ export default function Test({ err, message, res }: Props) {
 
   useEffect(() => {
     if (!testToken && status !== 'not_checked_token') {
-      router.push('/')
+      router.push(Paths.home)
     }
   }, [testToken, status])
 
   useEffect(() => {
     if (status === 'successfully_restored_progress') {
-      dispatch({ type: 'setAnswers', answers: savedProgress })
+      setWritingProgressState('checking')
     }
   }, [status])
+
+  useMountlessEffect(() => {
+    if (writingProgressState === 'checking') {
+      dispatch({ type: 'setAnswers', answers: savedProgress })
+      setWritingProgressState('dispatched_to_store')
+    }
+  }, [writingProgressState])
+
+  useMountlessEffect(() => {
+    if (writingProgressState === 'dispatched_to_store') {
+      setPage(TestPageUtils.getReturnToPage(paginatedQuestions, state.answers))
+      setWritingProgressState('changed_page_to_match_progress')
+    }
+  }, [writingProgressState])
 
   useMountlessEffect(() => {
     isLoading ? toggle(true) : toggle(false)

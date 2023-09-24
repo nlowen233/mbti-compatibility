@@ -6,6 +6,7 @@ import { SessionContext } from '@/contexts/SessionContext'
 import { useMountlessEffect } from '@/hooks/useMountlessEffect'
 import { API } from '@/misc/API'
 import { Convert } from '@/misc/Convert'
+import { Paths } from '@/misc/Paths'
 import { Storage } from '@/misc/Storage'
 import { Theme } from '@/misc/Theme'
 import '@/styles/globals.css'
@@ -33,7 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
       router.push('/api/auth/logout')
     },
     title: 'Log Out/Retake Test',
-    disabled: router.pathname === '/',
+    disabled: router.pathname === Paths.home,
   }
 
   useEffect(() => {
@@ -42,6 +43,9 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [])
 
   useEffect(() => {
+    if (router.pathname !== Paths.home && router.pathname !== Paths.test) {
+      return
+    }
     if (status === 'not_checked_token') {
       const token = Storage.getToken()
       if (token) {
@@ -51,7 +55,7 @@ export default function App({ Component, pageProps }: AppProps) {
         setStatus('does_not_have_token')
       }
     }
-  }, [status])
+  }, [status, router.pathname])
 
   useMountlessEffect(() => {
     if (status === 'has_token_will_attempt_resume') {
@@ -67,7 +71,7 @@ export default function App({ Component, pageProps }: AppProps) {
             const converted = Convert.sqlToTestAnswers(answers)
             setSavedProgress(converted.answers)
             setStatus('successfully_restored_progress')
-            router.push('/test')
+            router.push(Paths.test)
           }
         })
         .finally(() => {
@@ -79,7 +83,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={Theme}>
       <UserProvider>
-        <SessionContext.Provider value={{ setTestToken, testToken, savedProgress, status }}>
+        <SessionContext.Provider value={{ setTestToken, testToken, savedProgress, status, setSavedProgress }}>
           <LoadingOverlayWrapper on={loadingOverlay} toggle={setLoadingOverlay}>
             <MenuWrapper options={[logOutOption]}>
               <PopUpWrapper clearMessage={() => setMessage(undefined)} pushPopUpMessage={(msg) => setMessage(msg)} popUpMessage={message}>

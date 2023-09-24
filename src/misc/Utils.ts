@@ -90,6 +90,8 @@ const getBaseURL = () => {
   }
 }
 
+const getDistance = (n1: number, n2: number) => Math.abs(n1 - n2)
+
 export const Utils = {
   stringOrNull,
   numberOrNull,
@@ -98,4 +100,5 @@ export const Utils = {
   windowExists,
   getBaseURL,
   fromSQLString,
+  getDistance,
 }

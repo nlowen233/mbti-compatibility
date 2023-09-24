@@ -1,7 +1,18 @@
 export const Colors = {
-    softPink: '#F7DAD9',
-    darkerPink: '#FF6B6B',
-    primaryText: '#333333',
-    secondaryText: '#666666',
-    white: '#fff'
+  softPink: '#F7DAD9',
+  darkerPink: '#FF6B6B',
+  primaryText: '#333333',
+  secondaryText: '#666666',
+  white: '#fff',
+  Fi: '#339FFF',
+  Fe: '#33FF5C',
+  Ne: '#FF339F',
+  Ni: '#FFB3EC',
+  Si: '#9F33FF',
+  Se: '#5C33FF',
+  Ti: '#FF9F33',
+  Te: '#FF5C33',
+  justRight: '#000000',
+  tooHigh: '#FF3333',
+  tooLow: '#0041C2',
 }

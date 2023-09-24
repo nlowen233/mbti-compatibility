@@ -22,7 +22,7 @@ export function FormSelect<OptionType extends string | number>({ label, onChange
       )}
       <Select
         placeholder={placeholder}
-        value={value || ''}
+        value={value !== undefined ? value : ''}
         onChange={(e) => onChange(e.target.value as OptionType)}
         style={{ width: '100%' }}
       >

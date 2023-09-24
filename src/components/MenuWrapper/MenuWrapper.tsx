@@ -16,6 +16,10 @@ export const MenuWrapper = ({ children, options }: Props) => {
   const handleClickListItem = (event: React.MouseEvent<SVGElement, MouseEvent>) => {
     setAnchorEl(event.currentTarget)
   }
+  const handleOptionClick = (callback: () => void) => {
+    callback()
+    handleClose()
+  }
   return (
     <>
       <SettingsIcon
@@ -40,7 +44,7 @@ export const MenuWrapper = ({ children, options }: Props) => {
         }}
       >
         {options.map((option) => (
-          <MenuItem key={option.title} onClick={option.onClick} disabled={option.disabled}>
+          <MenuItem key={option.title} onClick={() => handleOptionClick(option.onClick)} disabled={option.disabled}>
             {option.title}
           </MenuItem>
         ))}

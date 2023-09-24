@@ -8,7 +8,9 @@ import { useMountlessEffect } from '@/hooks/useMountlessEffect'
 import { API } from '@/misc/API'
 import { Constants } from '@/misc/Constants'
 import { Convert } from '@/misc/Convert'
+import { Paths } from '@/misc/Paths'
 import { Storage } from '@/misc/Storage'
+import { SQLTest } from '@/types/SQLTypes'
 import { UserContext } from '@auth0/nextjs-auth0/client'
 import { Box, Button, Typography, useTheme } from '@mui/material'
 import { useRouter } from 'next/router'
@@ -20,7 +22,7 @@ export default function Home() {
   const router = useRouter()
   const { palette } = useTheme()
   const { user } = useContext(UserContext)
-  const { setTestToken } = useContext(SessionContext)
+  const { setTestToken, setSavedProgress } = useContext(SessionContext)
   const { pushPopUpMessage } = useContext(PopUpContext)
   const { toggle } = useContext(LoadingOverlayContext)
   const [isCreatingTest, setIsCreatingTest] = useState(false)
@@ -39,7 +41,11 @@ export default function Home() {
     setIsCreatingTest(true)
     const testRes = await API.loginStartTest({ ...state, ...user })
     setIsCreatingTest(false)
-    const testToken = testRes.res?.id
+    if (testRes.err) {
+      return pushPopUpMessage({ message: testRes.message || Constants.unknownError, title: 'Could not start test', type: 'error' })
+    }
+    const convertedTestRes = Convert.sqlToTest(testRes.res as SQLTest)
+    const testToken = convertedTestRes.id
     if (!testToken) {
       return pushPopUpMessage({ message: 'Server failed to return test token', title: 'Could not start test', type: 'error' })
     }
@@ -47,8 +53,9 @@ export default function Home() {
       return pushPopUpMessage({ message: testRes.message || Constants.unknownError, title: 'Could not start test', type: 'error' })
     }
     setTestToken(testToken)
+    setSavedProgress(convertedTestRes.answers)
     Storage.storeToken(testToken)
-    router.push('/test')
+    router.push(Paths.test)
   }
 
   useEffect(() => {
