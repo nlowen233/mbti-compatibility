@@ -1,26 +1,29 @@
-import { useTheme, Typography, Box, Button } from '@mui/material'
-import { MainWrapper } from '@/components/MainWrapper'
-import { useReducer } from 'react'
-import { IndexPageReducer } from '../components/_index/reducer'
-import { UserContext } from '@auth0/nextjs-auth0/client'
 import { FormSelect } from '@/components/FormSelect'
-import { Constants } from '@/misc/Constants'
-import { useContext, useEffect } from 'react'
-import { Convert } from '@/misc/Convert'
-import { useRouter } from 'next/router'
-import { IndexPageQueryDictionary } from '../components/_index/types'
-import { API } from '@/misc/API'
-import { SessionContext } from '@/contexts/SessionContext'
-import { PopUpContext } from '@/contexts/PopUpContext'
-import { Storage } from '@/misc/Storage'
 import { Head } from '@/components/Head'
+import { MainWrapper } from '@/components/MainWrapper'
+import { LoadingOverlayContext } from '@/contexts/LoadingOverlayContext'
+import { PopUpContext } from '@/contexts/PopUpContext'
+import { SessionContext } from '@/contexts/SessionContext'
+import { useMountlessEffect } from '@/hooks/useMountlessEffect'
+import { API } from '@/misc/API'
+import { Constants } from '@/misc/Constants'
+import { Convert } from '@/misc/Convert'
+import { Storage } from '@/misc/Storage'
+import { UserContext } from '@auth0/nextjs-auth0/client'
+import { Box, Button, Typography, useTheme } from '@mui/material'
+import { useRouter } from 'next/router'
+import { useContext, useEffect, useReducer, useState } from 'react'
+import { IndexPageReducer } from '../components/_index/reducer'
+import { IndexPageQueryDictionary } from '../components/_index/types'
 
 export default function Home() {
   const router = useRouter()
   const { palette } = useTheme()
-  const { user,isLoading } = useContext(UserContext)
+  const { user } = useContext(UserContext)
   const { setTestToken } = useContext(SessionContext)
   const { pushPopUpMessage } = useContext(PopUpContext)
+  const { toggle } = useContext(LoadingOverlayContext)
+  const [isCreatingTest, setIsCreatingTest] = useState(false)
   const [state, dispatch] = useReducer(IndexPageReducer.reducer, IndexPageReducer.INIT_STATE())
   const query = router.query as IndexPageQueryDictionary
   const buttonDisabled = !state.age || !state.expectedResult || !state.gender || !state.mbtiType
@@ -33,15 +36,19 @@ export default function Home() {
   const onChangeExpected = (expectedResult: string | undefined) => dispatch({ type: 'setexpectedResult', expectedResult })
 
   const onStartTest = async () => {
+    setIsCreatingTest(true)
     const testRes = await API.loginStartTest({ ...state, ...user })
-    if (testRes.err) {
-      pushPopUpMessage({ message: testRes.message || Constants.unknownError, title: 'Could not start test', type: 'error' })
-    } else {
-      const token = testRes.res?.id as string
-      setTestToken(token)
-      Storage.storeToken(token)
-      router.push('/test')
+    setIsCreatingTest(false)
+    const testToken = testRes.res?.id
+    if (!testToken) {
+      return pushPopUpMessage({ message: 'Server failed to return test token', title: 'Could not start test', type: 'error' })
     }
+    if (testRes.err) {
+      return pushPopUpMessage({ message: testRes.message || Constants.unknownError, title: 'Could not start test', type: 'error' })
+    }
+    setTestToken(testToken)
+    Storage.storeToken(testToken)
+    router.push('/test')
   }
 
   useEffect(() => {
@@ -60,9 +67,13 @@ export default function Home() {
     }
   }, [query])
 
+  useMountlessEffect(() => {
+    isCreatingTest ? toggle(true) : toggle(false)
+  }, [isCreatingTest])
+
   return (
     <>
-      <Head/>
+      <Head />
       <MainWrapper>
         <div
           style={{

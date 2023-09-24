@@ -9,11 +9,12 @@ type Props = {
   question?: Partial<QuestionType>
   score?: number
   questionIndex?: number
+  style?: React.CSSProperties
 }
 
-export const SelectableQuestion = ({ onSelectScore, question, score,questionIndex }: Props) => {
+export const SelectableQuestion = ({ onSelectScore, question, score,questionIndex,style }: Props) => {
   return (
-    <div style={{padding:20}}>
+    <div style={{paddingLeft:20,paddingRight:20,...style}}>
       <Typography variant="h4" textAlign="center" style={{ paddingBottom: 10 }}>
         {questionIndex||0}. {question?.text}
       </Typography>

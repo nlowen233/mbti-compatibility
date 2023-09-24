@@ -1,20 +1,21 @@
 import { LoadingOverlayWrapper } from '@/components/LoadingOverlay/LoadingOverlayWrapper'
+import { MenuWrapper } from '@/components/MenuWrapper/MenuWrapper'
 import { PopUpWrapper } from '@/components/PopUpWrapper'
 import { PopUpMessage } from '@/contexts/PopUpContext'
 import { SessionContext } from '@/contexts/SessionContext'
-import { Storage } from '@/misc/Storage'
-import { Theme } from '@/misc/Theme'
-import '@/styles/globals.css'
-import { ProgressStatus } from '@/types/misc'
-import { UserProvider } from '@auth0/nextjs-auth0/client'
-import { ThemeProvider } from '@mui/material'
-import type { AppProps } from 'next/app'
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import { Answer, SQLTestAnswers } from '@/types/SQLTypes'
 import { useMountlessEffect } from '@/hooks/useMountlessEffect'
 import { API } from '@/misc/API'
 import { Convert } from '@/misc/Convert'
+import { Storage } from '@/misc/Storage'
+import { Theme } from '@/misc/Theme'
+import '@/styles/globals.css'
+import { Answer, SQLTestAnswers } from '@/types/SQLTypes'
+import { MenuOption, ProgressStatus } from '@/types/misc'
+import { UserProvider } from '@auth0/nextjs-auth0/client'
+import { ThemeProvider } from '@mui/material'
+import type { AppProps } from 'next/app'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 
 export default function App({ Component, pageProps }: AppProps) {
   const [loadingOverlay, setLoadingOverlay] = useState(false)
@@ -23,6 +24,17 @@ export default function App({ Component, pageProps }: AppProps) {
   const [status, setStatus] = useState<ProgressStatus>('not_checked_token')
   const [savedProgress, setSavedProgress] = useState<Answer[] | undefined>(undefined)
   const router = useRouter()
+
+  const logOutOption: MenuOption = {
+    onClick: () => {
+      setTestToken(undefined)
+      setSavedProgress(undefined)
+      Storage.clearToken()
+      router.push('/api/auth/logout')
+    },
+    title: 'Log Out/Retake Test',
+    disabled: router.pathname === '/',
+  }
 
   useEffect(() => {
     router.events.on('routeChangeStart', () => setLoadingOverlay(true))
@@ -58,7 +70,9 @@ export default function App({ Component, pageProps }: AppProps) {
             router.push('/test')
           }
         })
-        .finally(() => setLoadingOverlay(false))
+        .finally(() => {
+          setLoadingOverlay(false)
+        })
     }
   }, [status])
 
@@ -67,9 +81,11 @@ export default function App({ Component, pageProps }: AppProps) {
       <UserProvider>
         <SessionContext.Provider value={{ setTestToken, testToken, savedProgress, status }}>
           <LoadingOverlayWrapper on={loadingOverlay} toggle={setLoadingOverlay}>
-            <PopUpWrapper clearMessage={() => setMessage(undefined)} pushPopUpMessage={(msg) => setMessage(msg)} popUpMessage={message}>
-              <Component {...pageProps} />
-            </PopUpWrapper>
+            <MenuWrapper options={[logOutOption]}>
+              <PopUpWrapper clearMessage={() => setMessage(undefined)} pushPopUpMessage={(msg) => setMessage(msg)} popUpMessage={message}>
+                <Component {...pageProps} />
+              </PopUpWrapper>
+            </MenuWrapper>
           </LoadingOverlayWrapper>
         </SessionContext.Provider>
       </UserProvider>

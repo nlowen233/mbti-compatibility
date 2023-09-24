@@ -56,7 +56,15 @@ export const Theme = createTheme({
               [`@media screen and (max-width: 500px)`]: {
                 fontSize: '1.25rem',
               },
-        }
+        },
+        h5: {
+          [`@media screen and (max-width: 800px)`]: {
+              fontSize: '1.15rem',
+            },
+            [`@media screen and (max-width: 500px)`]: {
+              fontSize: '1rem',
+            },
+      }
     },
     components: {
         MuiCssBaseline: {

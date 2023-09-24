@@ -22,4 +22,10 @@ export type IDReq = {
   id: string
 }
 
-export type RadioButtonOrder = 1|2|3|4|5|6|7
+export type RadioButtonOrder = 1 | 2 | 3 | 4 | 5 | 6 | 7
+
+export type MenuOption = {
+  title: string
+  onClick: () => void
+  disabled?: boolean
+}
