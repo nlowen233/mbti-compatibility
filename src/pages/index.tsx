@@ -10,7 +10,6 @@ import { Constants } from '@/misc/Constants'
 import { Convert } from '@/misc/Convert'
 import { Paths } from '@/misc/Paths'
 import { Storage } from '@/misc/Storage'
-import { SQLTest } from '@/types/SQLTypes'
 import { UserContext } from '@auth0/nextjs-auth0/client'
 import { Box, Button, Typography, useTheme } from '@mui/material'
 import { useRouter } from 'next/router'
@@ -44,8 +43,7 @@ export default function Home() {
     if (testRes.err) {
       return pushPopUpMessage({ message: testRes.message || Constants.unknownError, title: 'Could not start test', type: 'error' })
     }
-    const convertedTestRes = Convert.sqlToTest(testRes.res as SQLTest)
-    const testToken = convertedTestRes.id
+    const testToken = testRes.res?.id
     if (!testToken) {
       return pushPopUpMessage({ message: 'Server failed to return test token', title: 'Could not start test', type: 'error' })
     }
@@ -53,7 +51,7 @@ export default function Home() {
       return pushPopUpMessage({ message: testRes.message || Constants.unknownError, title: 'Could not start test', type: 'error' })
     }
     setTestToken(testToken)
-    setSavedProgress(convertedTestRes.answers)
+    setSavedProgress(testRes.res?.answers)
     Storage.storeToken(testToken)
     router.push(Paths.test)
   }
@@ -116,12 +114,12 @@ export default function Home() {
             >
               <FormSelect onChange={onChangeAge} value={state.age} label="Age" options={Constants.Ages()} />
               <FormSelect onChange={onChangeGender} value={state.gender} label="Gender" options={Constants.Genders()} />
-              <FormSelect onChange={onChangeMBTI} value={state.mbtiType} label="Your presumed MBTI" options={Constants.MBTIs()} />
+              <FormSelect onChange={onChangeMBTI} value={state.mbtiType} label="Your presumed MBTI" options={Constants.MBTIOptions()} />
               <FormSelect
                 onChange={onChangeExpected}
                 value={state.expectedResult}
                 label="Your expected most compatible MBTI"
-                options={Constants.MBTIs()}
+                options={Constants.MBTIOptions()}
               />
             </Box>
           </div>

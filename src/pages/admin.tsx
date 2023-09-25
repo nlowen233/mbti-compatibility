@@ -8,10 +8,10 @@ import { PopUpContext } from '@/contexts/PopUpContext'
 import { API } from '@/misc/API'
 import { Constants } from '@/misc/Constants'
 import { Convert } from '@/misc/Convert'
-import { Roles } from '@/misc/Roles'
 import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
 import { Styles } from '@/misc/Styles'
+import { Utils } from '@/misc/Utils'
 import { ZIndex } from '@/misc/ZIndex'
 import { Question, SQLQuestion, Scores } from '@/types/SQLTypes'
 import { APIRes } from '@/types/misc'
@@ -33,8 +33,7 @@ const grid = Styles.functionGrid()
 
 export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res }) => {
   const session = await getSession(req, res)
-  const roles = session?.user[Constants.rolesNamespace] as string[] | undefined
-  if (!roles?.includes(Roles.admin)) {
+  if (Utils.isAdmin(session?.user)) {
     return {
       redirect: {
         destination: '/404',
@@ -73,7 +72,7 @@ export default function Admin({ err, message, res }: Props) {
   const currentQuestions = paginatedQuestions[page]
   const functionTotals = AdminUtils.getAllFunctionTotals(state.questions)
   const [average, workingAverage] = AdminUtils.getAverageFunctionKey(functionTotals)
-  const submitDisabled = _.isEqual(state.questions, state.cachedQuestions) || AdminUtils.allScoresAreEqual(functionTotals)
+  const submitDisabled = _.isEqual(state.questions, state.cachedQuestions)
   const unsavedQuestions = state.questions.filter(
     (q) =>
       !_.isEqual(

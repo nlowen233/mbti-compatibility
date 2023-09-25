@@ -1,7 +1,8 @@
 import { Scores } from '@/types/SQLTypes'
-import { Option } from '@/types/misc'
+import { MBTI, Option } from '@/types/misc'
+import { MBTIs } from './MBTI'
 
-const MBTIs = (): Option<string>[] => [
+const MBTIOptions = (): Option<string>[] => [
   { display: 'ENTP', value: 'ENTP' },
   { display: 'ENTJ', value: 'ENTJ' },
   { display: 'INTJ', value: 'INTJ' },
@@ -59,8 +60,31 @@ const INIT_FUNCTION_SCORES = (): Scores => ({
   Ti: 0,
 })
 
+const MBTIArray = (): MBTI[] => [
+  MBTIs.ENTJ(),
+  MBTIs.INTJ(),
+  MBTIs.ENTP(),
+  MBTIs.INTP(),
+  MBTIs.ENFJ(),
+  MBTIs.INFJ(),
+  MBTIs.ENFP(),
+  MBTIs.INFP(),
+  MBTIs.ESTJ(),
+  MBTIs.ISTJ(),
+  MBTIs.ESFJ(),
+  MBTIs.ISFJ(),
+  MBTIs.ESTP(),
+  MBTIs.ISTP(),
+  MBTIs.ESFP(),
+  MBTIs.ISFP(),
+]
+
+const SIGMOID_WEIGHT = () => 1
+
+const TRUE = () => 'true'
+
 export const Constants = {
-  MBTIs,
+  MBTIOptions,
   Ages,
   Genders,
   unknownError: 'Unexpected error occured',
@@ -69,4 +93,8 @@ export const Constants = {
   rolesNamespace: 'https://mbti-compatibility.com/roles',
   Scores,
   INIT_FUNCTION_SCORES,
+  numberOfButtonsOnScale: 7,
+  MBTIArray,
+  SIGMOID_WEIGHT,
+  TRUE,
 }

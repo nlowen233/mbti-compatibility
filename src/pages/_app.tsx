@@ -1,16 +1,17 @@
 import { LoadingOverlayWrapper } from '@/components/LoadingOverlay/LoadingOverlayWrapper'
 import { MenuWrapper } from '@/components/MenuWrapper/MenuWrapper'
 import { PopUpWrapper } from '@/components/PopUpWrapper'
+import { ResultsPageQueries } from '@/components/_results/types'
 import { PopUpMessage } from '@/contexts/PopUpContext'
 import { SessionContext } from '@/contexts/SessionContext'
 import { useMountlessEffect } from '@/hooks/useMountlessEffect'
 import { API } from '@/misc/API'
-import { Convert } from '@/misc/Convert'
+import { Constants } from '@/misc/Constants'
 import { Paths } from '@/misc/Paths'
 import { Storage } from '@/misc/Storage'
 import { Theme } from '@/misc/Theme'
 import '@/styles/globals.css'
-import { Answer, SQLTestAnswers } from '@/types/SQLTypes'
+import { Answer, TestStatus } from '@/types/SQLTypes'
 import { MenuOption, ProgressStatus } from '@/types/misc'
 import { UserProvider } from '@auth0/nextjs-auth0/client'
 import { ThemeProvider } from '@mui/material'
@@ -43,7 +44,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [])
 
   useEffect(() => {
-    if (router.pathname !== Paths.home && router.pathname !== Paths.test) {
+    if (router.pathname === Paths.admin) {
       return
     }
     if (status === 'not_checked_token') {
@@ -60,18 +61,18 @@ export default function App({ Component, pageProps }: AppProps) {
   useMountlessEffect(() => {
     if (status === 'has_token_will_attempt_resume') {
       setLoadingOverlay(true)
-      API.getAnswersByTestID({ id: testToken as string })
+      API.getTestAnswers({ id: testToken as string })
         .then((res) => {
           if (res.err) {
             setStatus('could_not_restore_progress')
             Storage.clearToken()
             setTestToken(undefined)
           } else {
-            const answers = res.res as SQLTestAnswers
-            const converted = Convert.sqlToTestAnswers(answers)
-            setSavedProgress(converted.answers)
+            setSavedProgress(res.res?.answers)
             setStatus('successfully_restored_progress')
-            router.push(Paths.test)
+            res.res?.status === TestStatus.Finished
+              ? router.push(`${Paths.results}?${ResultsPageQueries.resultsInState}=${Constants.TRUE()}`)
+              : router.push(Paths.test)
           }
         })
         .finally(() => {

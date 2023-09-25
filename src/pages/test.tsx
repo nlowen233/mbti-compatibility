@@ -2,6 +2,7 @@ import { Head } from '@/components/Head'
 import { MainWrapper } from '@/components/MainWrapper'
 import { ProgressBar } from '@/components/ProgressBar'
 import { SelectableQuestion } from '@/components/SelectableQuestion'
+import { ResultsPageQueries } from '@/components/_results/types'
 import { TestPageUtils } from '@/components/_test/misc'
 import { TestPageReducer } from '@/components/_test/reducer'
 import { LoadingOverlayContext } from '@/contexts/LoadingOverlayContext'
@@ -14,7 +15,7 @@ import { Convert } from '@/misc/Convert'
 import { Paths } from '@/misc/Paths'
 import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
-import { SQLQuestion, TestStatus } from '@/types/SQLTypes'
+import { Question, SQLQuestion, TestStatus } from '@/types/SQLTypes'
 import { APIRes } from '@/types/misc'
 import { Box, Button, Typography } from '@mui/material'
 import { db } from '@vercel/postgres'
@@ -26,14 +27,14 @@ import { WritingProgressState } from './api/tests/types'
 
 const PAGINATE_ON = 10
 
-type Props = APIRes<SQLQuestion[]>
+type Props = APIRes<Partial<Question>[]>
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ req }) => {
   const client = await db.connect()
-  const res = await SQL.query<SQLQuestion>(client, SQLQueries.getQuestions)
+  const sqlRes = await SQL.query<SQLQuestion>(client, SQLQueries.getQuestions)
   client.release()
   return {
-    props: res,
+    props: { ...sqlRes, res: sqlRes.res?.map(Convert.sqlToQuestion) || [] },
   }
 }
 
@@ -48,11 +49,12 @@ export default function Test({ err, message, res }: Props) {
   const { pushPopUpMessage } = useContext(PopUpContext)
   const { toggle } = useContext(LoadingOverlayContext)
 
-  const questions = res?.map(Convert.sqlToQuestion) || []
+  const questions = res
   const paginatedQuestions = Array.from(
     { length: Math.ceil((questions?.length || 0) / PAGINATE_ON) },
     (_, index) => questions?.slice(index * PAGINATE_ON, index * PAGINATE_ON + PAGINATE_ON),
-  )
+  ) as Partial<Question>[][]
+
   const currentQuestions = paginatedQuestions[page]
   const goBackDisabled = page === 0
   const nextDisabled = isLoading || currentQuestions?.some((q) => !state.answers.find((a) => a.id === q.id))
@@ -79,7 +81,7 @@ export default function Test({ err, message, res }: Props) {
     if (res.err) {
       pushPopUpMessage({ message: res.message || Constants.unknownError, title: 'Error finalizing your test', type: 'error' })
     } else {
-      router.push('/results')
+      router.push(`${Paths.results}?${ResultsPageQueries.resultsInState}=${Constants.TRUE()}`)
     }
   }
 

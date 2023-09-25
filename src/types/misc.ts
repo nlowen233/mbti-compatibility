@@ -1,3 +1,5 @@
+import { Scores } from './SQLTypes'
+
 export type Option<T extends string | number> = { value: T; display: string }
 
 export interface APIRes<T> {
@@ -28,4 +30,16 @@ export type MenuOption = {
   title: string
   onClick: () => void
   disabled?: boolean
+}
+
+export type MBTI = {
+  name: string
+  dominant: keyof Scores
+  auxiliary: keyof Scores
+  tertiary: keyof Scores
+  inferior: keyof Scores
+  opposing?: keyof Scores
+  critical?: keyof Scores
+  trickster?: keyof Scores
+  demon?: keyof Scores
 }

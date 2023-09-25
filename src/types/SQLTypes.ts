@@ -2,7 +2,7 @@ export type SQLTest = {
   id: string
   user_id: string
   status: number
-  created_at: string
+  created_at: Date
 } & SQLTestAnswers
 
 export type SQLTestAnswers = {
@@ -36,24 +36,24 @@ export type SQLError = {
 }
 
 export type SQLQuestion = {
-    id: number
-    scores: string|null
-    text: string|null
+  id: number
+  scores: string | null
+  text: string | null
 }
 
 export type Question = {
-    id: string
-    scores: Scores
-    text: string
+  id: string
+  scores: Scores
+  text: string
 }
 
 export type Scores = {
-    Ni: number
-    Ne: number
-    Ti: number
-    Te: number
-    Fe: number
-    Fi: number
-    Si: number
-    Se: number
+  Ni: number
+  Ne: number
+  Ti: number
+  Te: number
+  Fe: number
+  Fi: number
+  Si: number
+  Se: number
 }

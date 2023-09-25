@@ -1,5 +1,7 @@
 import { Primitive } from '@/types/misc'
+import { Claims } from '@auth0/nextjs-auth0'
 import { Constants } from './Constants'
+import { Roles } from './Roles'
 
 const windowExists = () => typeof window === 'object' && window !== null
 
@@ -92,6 +94,16 @@ const getBaseURL = () => {
 
 const getDistance = (n1: number, n2: number) => Math.abs(n1 - n2)
 
+const sigmoidFunction = (x: number, weight = 1) => 1 / (1 + Math.pow(Math.E, weight * x))
+
+const isAdmin = (user?: Claims) => {
+  if (!user) {
+    return false
+  }
+  const roles = user[Constants.rolesNamespace] as string[] | undefined
+  return !roles?.includes(Roles.admin)
+}
+
 export const Utils = {
   stringOrNull,
   numberOrNull,
@@ -101,4 +113,6 @@ export const Utils = {
   getBaseURL,
   fromSQLString,
   getDistance,
+  sigmoidFunction,
+  isAdmin,
 }
