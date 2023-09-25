@@ -4,6 +4,8 @@ import { AdminUtils } from '@/components/_admin/misc'
 import { AdminPageReducer } from '@/components/_admin/reducer'
 import { AdminPageAction } from '@/components/_admin/types'
 import { LoadingOverlayContext } from '@/contexts/LoadingOverlayContext'
+import { PopUpContext } from '@/contexts/PopUpContext'
+import { API } from '@/misc/API'
 import { Constants } from '@/misc/Constants'
 import { Convert } from '@/misc/Convert'
 import { Roles } from '@/misc/Roles'
@@ -55,7 +57,8 @@ export default function Admin({ err, message, res }: Props) {
   const [pageSize, setPageSize] = useState(8)
   const [page, setPage] = useState(0)
   const [pageSizeInput, setPageSizeInput] = useState(`${pageSize}`)
-  const loading = useContext(LoadingOverlayContext)
+  const loadOverlayContext = useContext(LoadingOverlayContext)
+  const { pushPopUpMessage } = useContext(PopUpContext)
 
   const [state, dispatch] = useReducer(
     AdminPageReducer.reducer,
@@ -71,6 +74,13 @@ export default function Admin({ err, message, res }: Props) {
   const functionTotals = AdminUtils.getAllFunctionTotals(state.questions)
   const [average, workingAverage] = AdminUtils.getAverageFunctionKey(functionTotals)
   const submitDisabled = _.isEqual(state.questions, state.cachedQuestions) || AdminUtils.allScoresAreEqual(functionTotals)
+  const unsavedQuestions = state.questions.filter(
+    (q) =>
+      !_.isEqual(
+        q,
+        state.cachedQuestions.find((k) => k.id === q.id),
+      ),
+  )
 
   const onChangeQuestionScore = ({ id, scoreKey, scoreValue }: Partial<AdminPageAction>) =>
     dispatch({ type: 'changeQuestionScore', id, scoreKey, scoreValue })
@@ -93,6 +103,17 @@ export default function Admin({ err, message, res }: Props) {
       return setPageSizeInput(`${pageSize}`)
     }
     setPageSize(numerical)
+  }
+
+  const onSaveChanges = async () => {
+    loadOverlayContext.toggle(true)
+    const res = await API.updateQuestions(unsavedQuestions)
+    loadOverlayContext.toggle(false)
+    if (res.err) {
+      pushPopUpMessage({ message: res.message || Constants.unknownError, title: 'Error saving questions', type: 'error' })
+    } else {
+      dispatch({ type: 'setQuestions', fromServer: true, questions: res.res?.map(Convert.sqlToQuestion) as Question[] | undefined })
+    }
   }
 
   useEffect(() => {
@@ -119,12 +140,7 @@ export default function Admin({ err, message, res }: Props) {
               onChangeScore={(scoreKey, scoreValue) => onChangeQuestionScore({ id: q.id, scoreKey, scoreValue })}
               onChangeText={(text) => onChangeQuestionText({ id: q.id, text })}
               style={{ marginBottom: 40 }}
-              serverDifference={
-                !_.isEqual(
-                  q,
-                  state.cachedQuestions.find((k) => k.id === q.id),
-                )
-              }
+              serverDifference={!!unsavedQuestions.find((uq) => uq.id === q.id)}
             />
           ))}
         </div>
@@ -145,6 +161,7 @@ export default function Admin({ err, message, res }: Props) {
               ...grid,
               paddingTop: 1,
               paddingBottom: 1,
+              justifyItems: 'center',
             }}
           >
             {Object.keys(functionTotals).map((func) => {
@@ -185,9 +202,21 @@ export default function Admin({ err, message, res }: Props) {
                 onBlur={onCommitPageSize}
               />
             </div>
-            <Button variant="contained" style={{ marginLeft: 10 }} disabled={submitDisabled}>
-              Save Changes
-            </Button>
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Button variant="contained" style={{ marginLeft: 10 }} disabled={submitDisabled} onClick={onSaveChanges}>
+                Save Changes
+              </Button>
+              {!AdminUtils.allScoresAreEqual(functionTotals) && (
+                <Typography
+                  fontStyle={'italic'}
+                  variant="subtitle1"
+                  paddingLeft={1}
+                  sx={{ '@media (max-width: 800px)': { display: 'none' } }}
+                >
+                  *All function totals must be equal
+                </Typography>
+              )}
+            </div>
           </div>
         </div>
       </MainWrapper>

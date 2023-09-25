@@ -1,13 +1,13 @@
 import { Constants } from '@/misc/Constants'
 import { Roles } from '@/misc/Roles'
 import { SQL } from '@/misc/SQL'
-import { Question } from '@/types/SQLTypes'
+import { Question, SQLQuestion } from '@/types/SQLTypes'
 import { Session, getSession, withApiAuthRequired } from '@auth0/nextjs-auth0'
-import { QueryResult, VercelPoolClient, db } from '@vercel/postgres'
+import { VercelPoolClient, db } from '@vercel/postgres'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { APIRes } from '../../../types/misc'
 
-export default withApiAuthRequired(async function handler(req: NextApiRequest, res: NextApiResponse<APIRes<QueryResult<any>>>) {
+export default withApiAuthRequired(async function handler(req: NextApiRequest, res: NextApiResponse<APIRes<SQLQuestion[]>>) {
   let session: Session | null | undefined = null
   let error
   try {
@@ -31,8 +31,8 @@ export default withApiAuthRequired(async function handler(req: NextApiRequest, r
   if (error || !client) {
     return res.status(500).send({ err: true, message: error as string, res: null })
   }
-  const updatedQuestion = req.body as Partial<Question>
-  const updateRes = await SQL.updateQuestion(client, updatedQuestion)
+  const updatedQuestions = req.body as Question[]
+  const updateRes = await SQL.updateQuestions(client, updatedQuestions)
   client.release()
   return res.status(!!updateRes.err ? 500 : 200).send(updateRes)
 })

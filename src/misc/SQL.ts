@@ -44,18 +44,12 @@ const loginStartTest = async (
   }
 }
 
-const updateQuestion = async (
-  client: VercelPoolClient,
-  { scores, text, id }: Partial<Question>,
-): Promise<APIRes<QueryResult<SQLQuestion>>> => {
+const updateQuestions = async (client: VercelPoolClient, questions: Question[]): Promise<APIRes<SQLQuestion[]>> => {
   let error
-  const params = []
-  params.push(Utils.parameterize(id))
-  params.push(Utils.parameterize(scores))
-  params.push(Utils.parameterize(text))
+  const paramsArray = questions.map(Utils.parameterize)
   let res = null
   try {
-    res = await client.query(SQLFunctions.updateQuestion(params))
+    res = await client.query(SQLFunctions.updateQuestions(paramsArray))
   } catch (err) {
     error = err
   }
@@ -69,7 +63,7 @@ const updateQuestion = async (
   return {
     err: false,
     message: null,
-    res,
+    res: res?.rows || [],
   }
 }
 
@@ -124,6 +118,6 @@ async function query<Response extends QueryResultRow>(client: VercelPoolClient, 
 export const SQL = {
   loginStartTest,
   query,
-  updateQuestion,
+  updateQuestions,
   updateTest,
 }
