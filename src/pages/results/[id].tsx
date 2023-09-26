@@ -6,14 +6,11 @@ import { ResultsUtils } from '@/components/_results/misc'
 import { PopUpContext } from '@/contexts/PopUpContext'
 import { useResizeObserver } from '@/hooks/useResizeObserver'
 import { Paths } from '@/misc/Paths'
-import { SQL } from '@/misc/SQL'
-import { SQLQueries } from '@/misc/SQLQueries'
 import { Utils } from '@/misc/Utils'
-import { Question, SQLTest, TestAndNickname } from '@/types/SQLTypes'
+import { Question, TestAndNickname } from '@/types/SQLTypes'
 import { APIRes } from '@/types/misc'
 import { UserContext } from '@auth0/nextjs-auth0/client'
 import { Box, Button, Typography, useMediaQuery } from '@mui/material'
-import { db } from '@vercel/postgres'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { useRouter } from 'next/router'
 import { useContext, useRef, useState } from 'react'
@@ -26,10 +23,7 @@ type Props = {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const client = await db.connect()
-  const res = await SQL.query<Partial<SQLTest>>(client, SQLQueries.getAllTestIDs)
-  const paths = res.res?.map((node) => ({ params: { id: node.id || '' } })) || []
-  client.release()
+  const paths = ([] as { id?: string }[]).map((node) => ({ params: { id: node.id || '' } })) || []
   return {
     paths,
     fallback: true,
