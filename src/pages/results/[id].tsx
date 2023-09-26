@@ -26,6 +26,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const client = await db.connect()
   const res = await SQL.query<Partial<SQLTest>>(client, SQLQueries.getAllTestIDs)
   const paths = res.res?.map((node) => ({ params: { id: node.id || '' } })) || []
+  console.log(paths)
   client.release()
   return {
     paths,
