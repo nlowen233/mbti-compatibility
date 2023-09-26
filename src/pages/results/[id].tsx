@@ -29,12 +29,6 @@ type Props = {
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = await db.connect()
   const res = await SQL.query<Partial<SQLTest>>(client, SQLQueries.getAllTestIDs)
-  if (res === undefined) {
-    console.log('res===undefined')
-  }
-  if (res.res === undefined) {
-    console.log('res.res===undefined')
-  }
   const paths = res.res?.map((node) => ({ params: { id: node.id || '' } })) || []
   client.release()
   return {
@@ -53,6 +47,15 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   )
   const [questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
   client.release()
+  if (testRes.res === undefined) {
+    console.log('testRes.res===undefined')
+  }
+  if (testRes?.res?.length && testRes.res[0] === undefined) {
+    console.log('testRes.res[0]===undefined')
+  }
+  if (questionsRes.res) {
+    console.log('questionRes.res===undefined')
+  }
   const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
   const convertedQuestions = questionsRes.res?.map(Convert.sqlToQuestion) || []
   return {
