@@ -1,45 +1,18 @@
 import { Head } from '@/components/Head'
-import { LoadingOverlay } from '@/components/LoadingOverlay/LoadingOverlay'
 import { MainWrapper } from '@/components/MainWrapper'
-import { ScoreNode } from '@/components/ScoreNode'
-import { ResultsUtils } from '@/components/_results/misc'
 import { PopUpContext } from '@/contexts/PopUpContext'
 import { useResizeObserver } from '@/hooks/useResizeObserver'
 import { Paths } from '@/misc/Paths'
 import { Utils } from '@/misc/Utils'
-import { Question, TestAndNickname } from '@/types/SQLTypes'
-import { APIRes } from '@/types/misc'
+import { TestAndNickname } from '@/types/SQLTypes'
 import { UserContext } from '@auth0/nextjs-auth0/client'
-import { Box, Button, Typography, useMediaQuery } from '@mui/material'
-import { GetStaticPaths, GetStaticProps } from 'next'
+import { useMediaQuery } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useContext, useRef, useState } from 'react'
 
 const DEFAULT_RESULT_CONTAINER_HEIGHT = 400
 
-type Props = {
-  questionsRes: APIRes<Partial<Question>[]>
-  testRes: APIRes<Partial<TestAndNickname> | null>
-}
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  const paths = ([] as { id?: string }[]).map((node) => ({ params: { id: node.id || '' } })) || []
-  return {
-    paths,
-    fallback: true,
-  }
-}
-
-export const getStaticProps: GetStaticProps<Props> = async (context) => {
-  return {
-    props: {
-      testRes: { err: true, message: null },
-      questionsRes: { err: true, message: null },
-    },
-  }
-}
-
-export default function Results({ questionsRes, testRes }: Props) {
+export default function Results() {
   const router = useRouter()
   const [resultContainerHeight, setResultContainerHeight] = useState(DEFAULT_RESULT_CONTAINER_HEIGHT)
   const { push, isFallback } = useRouter()
@@ -47,12 +20,8 @@ export default function Results({ questionsRes, testRes }: Props) {
   const { pushPopUpMessage } = useContext(PopUpContext)
   const resultContainerRef = useRef<HTMLDivElement>(null)
   const hideStickyButtonShowStatic = useMediaQuery('@media (min-width: 620px)')
-  const test = testRes.res
-  const answers = test?.answers || []
-  const questions = questionsRes.res || []
-  const scores = ResultsUtils.deriveCompatibleCognitiveScores(questions, answers)
-
-  const matches = ResultsUtils.deriveCompatibilityVectors(scores)
+  const test = {} as TestAndNickname
+  const answers = []
   const getHeader = () => {
     if (isFallback) {
       return `Hang on while we get your results ready...`
@@ -81,74 +50,7 @@ export default function Results({ questionsRes, testRes }: Props) {
   return (
     <>
       <Head />
-      <MainWrapper>
-        <LoadingOverlay loading={isFallback} />
-        <Typography variant="h3" style={{ textAlign: 'center', paddingLeft: 20, paddingRight: 20, paddingTop: 30 }}>
-          {getHeader()}
-        </Typography>
-        {!isFallback &&
-          (!!answers.length ? (
-            <>
-              <Typography variant="body1" style={{ textAlign: 'center', padding: '10px 20px 5px 20px' }}>
-                {`Here are your results! Also included, is how closely your romantic preference for each individual cognitive functions aligns with each MBTI's preference`}
-              </Typography>
-              {!hideStickyButtonShowStatic && (
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
-                  <Button variant="contained" style={{ marginTop: 20 }} onClick={onButtonClick}>
-                    {buttonText}
-                  </Button>
-                </div>
-              )}
-              <div style={{ display: 'flex' }} ref={resultContainerRef}>
-                <Box
-                  sx={{
-                    width: 600,
-                    '@media (max-width: 820px)': {
-                      width: 400,
-                    },
-                    '@media (max-width: 430px)': {
-                      width: '100%',
-                    },
-                  }}
-                >
-                  {...matches
-                    .sort((a, b) => b.compatibilityScore - a.compatibilityScore)
-                    .map((match, i) => <ScoreNode match={match} key={match.key} index={i} />)}
-                </Box>
-                {hideStickyButtonShowStatic && (
-                  <div style={{ height: resultContainerHeight }}>
-                    <div style={{ position: 'sticky', top: 60, right: 20, marginTop: 20 }}>
-                      <Button variant="contained" onClick={onButtonClick}>
-                        {buttonText}
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div style={{ height: 40 }} />
-            </>
-          ) : (
-            <div
-              style={{
-                height: '90vh',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                minHeight: 600,
-              }}
-            >
-              <Typography variant="h2" style={{ textAlign: 'center', paddingLeft: 40, paddingRight: 40, paddingTop: 10 }}>
-                {`We can't find any record of this test... sorry!`}
-              </Typography>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: 30 }}>
-                <Button variant="contained" onClick={() => push(Paths.home)}>
-                  {`I'll take you home`}
-                </Button>
-              </div>
-            </div>
-          ))}
-      </MainWrapper>
+      <MainWrapper></MainWrapper>
     </>
   )
 }
