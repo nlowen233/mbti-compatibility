@@ -29,6 +29,12 @@ type Props = {
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = await db.connect()
   const res = await SQL.query<Partial<SQLTest>>(client, SQLQueries.getAllTestIDs)
+  if (res === undefined) {
+    console.log('res===undefined')
+  }
+  if (res.res === undefined) {
+    console.log('res.res===undefined')
+  }
   const paths = res.res?.map((node) => ({ params: { id: node.id || '' } })) || []
   client.release()
   return {
