@@ -31,7 +31,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
   const res = await SQL.query<Partial<SQLTest>>(client, SQLQueries.getAllTestIDs)
   console.log(`${!!res?.res},${!!res}`)
   const paths = res.res?.map((node) => ({ params: { id: node.id || '' } })) || []
-  client.release()
+  //client.release()
   return {
     paths,
     fallback: true,
@@ -53,7 +53,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     console.log(e)
   } finally {
     console.log(`${!!questionsRes?.res},${!!testRes?.res}`)
-    client.release()
+    //client.release()
   }
   const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
   const convertedQuestions = questionsRes?.res?.map(Convert.sqlToQuestion) || []
