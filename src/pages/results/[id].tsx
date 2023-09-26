@@ -29,7 +29,6 @@ type Props = {
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = await db.connect()
   const res = await SQL.query<Partial<SQLTest>>(client, SQLQueries.getAllTestIDs)
-  console.log(console.log(res.res))
   const paths = res.res?.map((node) => ({ params: { id: node.id || '' } })) || []
   client.release()
   return {
@@ -48,6 +47,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   )
   const [questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
   client.release()
+  console.log(questionsRes, testRes)
   const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
   const convertedQuestions = questionsRes.res?.map(Convert.sqlToQuestion) || []
   return {
