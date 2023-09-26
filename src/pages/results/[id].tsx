@@ -5,12 +5,11 @@ import { ScoreNode } from '@/components/ScoreNode'
 import { ResultsUtils } from '@/components/_results/misc'
 import { PopUpContext } from '@/contexts/PopUpContext'
 import { useResizeObserver } from '@/hooks/useResizeObserver'
-import { Convert } from '@/misc/Convert'
 import { Paths } from '@/misc/Paths'
 import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
 import { Utils } from '@/misc/Utils'
-import { Question, SQLQuestion, SQLTest, SQLTestAndNickname, TestAndNickname } from '@/types/SQLTypes'
+import { Question, SQLTest, TestAndNickname } from '@/types/SQLTypes'
 import { APIRes } from '@/types/misc'
 import { UserContext } from '@auth0/nextjs-auth0/client'
 import { Box, Button, Typography, useMediaQuery } from '@mui/material'
@@ -38,21 +37,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async (context) => {
-  const client = await db.connect()
-  const questionPromise = SQL.query<SQLQuestion>(client, SQLQueries.getQuestions)
-  const testID = context?.params?.id as string
-  const testPromise: Promise<APIRes<SQLTestAndNickname[]>> = SQL.query<SQLTestAndNickname>(
-    client,
-    SQLQueries.getTestAndNicknameByID(testID as string),
-  )
-  const [questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
-  client.release()
-  const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
-  const convertedQuestions = questionsRes.res?.map(Convert.sqlToQuestion) || []
   return {
     props: {
-      testRes: { err: !!testRes?.err, res: test, message: testRes?.message || null },
-      questionsRes: { ...questionsRes, res: convertedQuestions },
+      testRes: { err: true, message: null },
+      questionsRes: { err: true, message: null },
     },
   }
 }
