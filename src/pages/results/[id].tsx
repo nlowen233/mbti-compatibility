@@ -64,7 +64,7 @@ export default function Results({ questionsRes, testRes, testProp }: Props) {
   const resultContainerRef = useRef<HTMLDivElement>(null)
   const hideStickyButtonShowStatic = useMediaQuery('@media (min-width: 620px)')
   if (!testRes?.res || !questionsRes?.res) {
-    console.log(testRes, questionsRes)
+    console.log(testRes, questionsRes, testProp)
   }
   if (testProp) {
     console.log('HAS TEST PROP' + testProp)
