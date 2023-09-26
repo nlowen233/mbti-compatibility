@@ -35,21 +35,25 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async (context) => {
-  const client = await db.connect()
-  const questionPromise = SQL.query<SQLQuestion>(client, SQLQueries.getQuestions)
-  const testID = context?.params?.id as string
-  const testPromise: Promise<APIRes<SQLTestAndNickname[]>> = SQL.query<SQLTestAndNickname>(
-    client,
-    SQLQueries.getTestAndNicknameByID(testID as string),
-  )
-  const [questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
-  client.release()
-  const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
-  const convertedQuestions = questionsRes.res?.map(Convert.sqlToQuestion) || []
+  try {
+    const client = await db.connect()
+    const questionPromise = SQL.query<SQLQuestion>(client, SQLQueries.getQuestions)
+    const testID = context?.params?.id as string
+    const testPromise: Promise<APIRes<SQLTestAndNickname[]>> = SQL.query<SQLTestAndNickname>(
+      client,
+      SQLQueries.getTestAndNicknameByID(testID as string),
+    )
+    const [questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
+    client.release()
+    const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
+    const convertedQuestions = questionsRes.res?.map(Convert.sqlToQuestion) || []
+  } catch (e) {
+    console.log(e)
+  }
   return {
     props: {
-      testRes: { err: !!testRes?.err, res: test, message: testRes?.message || null },
-      questionsRes: { ...questionsRes, res: convertedQuestions },
+      testRes: { err: true, message: null },
+      questionsRes: { err: true, message: null },
       testProp: 'TEST',
     },
   }
