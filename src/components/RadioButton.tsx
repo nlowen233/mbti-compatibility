@@ -1,6 +1,5 @@
 import { RadioButtonOrder } from '@/types/misc'
-import React from 'react'
-import { useMediaQuery, Box } from '@mui/material'
+import { Box } from '@mui/material'
 
 type Props = {
   onClick: () => void
@@ -31,6 +30,7 @@ const convertRadioButtonOrderToColor = (order: RadioButtonOrder): string => {
 }
 
 export const RadioButton = ({ onClick, on, order, disabled }: Props) => {
+  const orderSizeMultiplier = Math.abs(4 - order) / 8 + 1
   return (
     <Box
       onClick={onClick}
@@ -44,23 +44,23 @@ export const RadioButton = ({ onClick, on, order, disabled }: Props) => {
         alignItems: 'center',
       }}
       sx={{
-        height: 40,
-        width: 40,
+        height: 36 * orderSizeMultiplier,
+        width: 36 * orderSizeMultiplier,
         '@media (max-width: 420px)': {
-          height: 30,
-          width: 30,
+          height: 26 * orderSizeMultiplier,
+          width: 26 * orderSizeMultiplier,
         },
         '@media (max-width: 330px)': {
-          height: 20,
-          width: 20,
+          height: 20 * orderSizeMultiplier,
+          width: 20 * orderSizeMultiplier,
         },
       }}
     >
       {!!on && (
         <div
           style={{
-            width: '80%',
-            height: '80%',
+            width: '70%',
+            height: '70%',
             borderRadius: 30,
             backgroundColor: convertRadioButtonOrderToColor(order),
           }}

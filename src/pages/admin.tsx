@@ -111,7 +111,7 @@ export default function Admin({ err, message, res }: Props) {
     if (res.err) {
       pushPopUpMessage({ message: res.message || Constants.unknownError, title: 'Error saving questions', type: 'error' })
     } else {
-      dispatch({ type: 'setQuestions', fromServer: true, questions: res.res?.map(Convert.sqlToQuestion) as Question[] | undefined })
+      dispatch({ type: 'setQuestions', fromServer: true, questions: (res.res || []) as Question[] })
     }
   }
 
@@ -155,28 +155,30 @@ export default function Admin({ err, message, res }: Props) {
             padding: 10,
           }}
         >
-          <Box
-            sx={{
-              ...grid,
-              paddingTop: 1,
-              paddingBottom: 1,
-              justifyItems: 'center',
-            }}
-          >
-            {Object.keys(functionTotals).map((func) => {
-              const score = functionTotals[func as keyof Scores]
-              return (
-                <div key={func} style={{ display: 'flex' }}>
-                  <Typography variant="h5" style={{ paddingRight: 10 }}>
-                    {func}
-                  </Typography>
-                  <Typography variant="h5" style={{ color: AdminUtils.deriveScoreColor(workingAverage, score) }}>
-                    {score}
-                  </Typography>
-                </div>
-              )
-            })}
-          </Box>
+          {false && (
+            <Box
+              sx={{
+                ...grid,
+                paddingTop: 1,
+                paddingBottom: 1,
+                justifyItems: 'center',
+              }}
+            >
+              {Object.keys(functionTotals).map((func) => {
+                const score = functionTotals[func as keyof Scores]
+                return (
+                  <div key={func} style={{ display: 'flex' }}>
+                    <Typography variant="h5" style={{ paddingRight: 10 }}>
+                      {func}
+                    </Typography>
+                    <Typography variant="h5" style={{ color: AdminUtils.deriveScoreColor(workingAverage, score) }}>
+                      {score}
+                    </Typography>
+                  </div>
+                )
+              })}
+            </Box>
+          )}
           <div style={{ width: '100%', justifyContent: 'center', alignItems: 'center', display: 'flex' }}>
             <IconButton onClick={() => onChangePage(page - 1)}>
               <ArrowBackIosIcon />

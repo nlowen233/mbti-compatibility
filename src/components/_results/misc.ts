@@ -62,6 +62,8 @@ export type MBTIScoreData = {
   compatibilityScore: number
 }
 
+const FUNCTION_WEIGHTS = [8, 4, 2, 1]
+
 const deriveCompatibilityVectors = (scores: ScoreNode[]): MBTIScoreData[] =>
   Constants.MBTIArray().map((mbti) => {
     const dom = scores.find((score) => score.key === mbti.dominant)
@@ -73,7 +75,9 @@ const deriveCompatibilityVectors = (scores: ScoreNode[]): MBTIScoreData[] =>
     const inf = scores.find((score) => score.key === mbti.inferior)
     const diffInf = 1 - Utils.getDistance(Convert.functionToScore('inferior'), inf?.value || 0)
     const vector = [diffDom, diffAux, diffTer, diffInf]
-    const compatibilityScore = vector.reduce((acc, cur) => acc + cur, 0) / vector.length
+    const compatibilityScore =
+      vector.map((score, i) => score * FUNCTION_WEIGHTS[i]).reduce((acc, cur) => acc + cur, 0) /
+      FUNCTION_WEIGHTS.reduce((acc, cur) => acc + cur, 0)
     return { key: mbti.name, vector, compatibilityScore }
   })
 

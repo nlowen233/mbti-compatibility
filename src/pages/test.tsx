@@ -2,7 +2,6 @@ import { Head } from '@/components/Head'
 import { MainWrapper } from '@/components/MainWrapper'
 import { ProgressBar } from '@/components/ProgressBar'
 import { SelectableQuestion } from '@/components/SelectableQuestion'
-import { ResultsPageQueries } from '@/components/_results/types'
 import { TestPageUtils } from '@/components/_test/misc'
 import { TestPageReducer } from '@/components/_test/reducer'
 import { LoadingOverlayContext } from '@/contexts/LoadingOverlayContext'
@@ -15,6 +14,7 @@ import { Convert } from '@/misc/Convert'
 import { Paths } from '@/misc/Paths'
 import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
+import { Storage } from '@/misc/Storage'
 import { Question, SQLQuestion, TestStatus } from '@/types/SQLTypes'
 import { APIRes } from '@/types/misc'
 import { Box, Button, Typography } from '@mui/material'
@@ -81,7 +81,8 @@ export default function Test({ err, message, res }: Props) {
     if (res.err) {
       pushPopUpMessage({ message: res.message || Constants.unknownError, title: 'Error finalizing your test', type: 'error' })
     } else {
-      router.push(`${Paths.results}?${ResultsPageQueries.resultsInState}=${Constants.TRUE()}`)
+      Storage.clearToken()
+      router.push(`${Paths.results}/${testToken}`)
     }
   }
 
@@ -141,7 +142,7 @@ export default function Test({ err, message, res }: Props) {
             />
           </div>
         ))}
-        <div style={{ height: 40 }} />
+        <div style={{ height: 80 }} />
         <Box
           style={{
             position: 'fixed',

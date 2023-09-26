@@ -1,5 +1,5 @@
 import { Constants } from '@/misc/Constants'
-import { Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { MBTIScoreData, ResultsUtils } from './_results/misc'
 
 const mbtis = Constants.MBTIArray()
@@ -13,8 +13,26 @@ export const ScoreNode = ({ match, index }: Props) => {
   const score = (match?.compatibilityScore || 0) * 100
   const mbti = mbtis.find((mbti) => mbti.name === match?.key)
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
-      <div style={{ width: '80%', display: 'flex', justifyContent: 'center' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        padding: 2,
+        '@media (max-width: 370px)': {
+          padding: 1,
+        },
+      }}
+    >
+      <Box
+        sx={{
+          width: '80%',
+          display: 'flex',
+          justifyContent: 'flex-start',
+          '@media (max-width: 370px)': {
+            justifyContent: 'center',
+          },
+        }}
+      >
         <div style={{ paddingRight: 30 }}>{Number.isInteger(index) && <Typography variant="h1">{(index as number) + 1}.</Typography>}</div>
         <div style={{ paddingRight: 10 }}>
           <Typography variant="h2">{match?.key}</Typography>
@@ -32,7 +50,7 @@ export const ScoreNode = ({ match, index }: Props) => {
             ))}
           </div>
         )}
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }

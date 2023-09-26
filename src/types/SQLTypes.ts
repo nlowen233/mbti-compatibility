@@ -9,6 +9,10 @@ export type SQLTestAnswers = {
   answers: string | null
 }
 
+export type SQLTestAndNickname = SQLTest & {
+  nick_name: string
+}
+
 export type Test = {
   id: string
   userId: string
@@ -20,6 +24,10 @@ export type TestAnswers = {
   answers: Answer[]
 }
 
+export type TestAndNickname = Test & {
+  nickName: string
+}
+
 export type Answer = {
   id: string
   score: number
@@ -28,7 +36,7 @@ export type Answer = {
 export const enum TestStatus {
   New = 0,
   InProgress = 1,
-  Finished = 2,
+  Finished = 3,
 }
 
 export type SQLError = {

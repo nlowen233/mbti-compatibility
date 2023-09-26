@@ -18,7 +18,7 @@ export type ProgressStatus =
   | 'does_not_have_token'
   | 'awaiting_server_call_to_resume'
   | 'successfully_restored_progress'
-  | 'could_not_restore_progress'
+  | 'did_not_restore_progress'
 
 export type IDReq = {
   id: string

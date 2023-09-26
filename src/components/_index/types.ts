@@ -14,6 +14,14 @@ export const enum IndexPageQueries {
   gender = 'gender',
 }
 
+export const enum IndexPageQueriesFix {
+  code = 'code',
+}
+
 export type IndexPageQueryDictionary = {
   [key in IndexPageQueries]?: string
+}
+
+export type IndexPageQueryDictionaryFix = {
+  [key in IndexPageQueriesFix]?: string
 }

@@ -1,5 +1,5 @@
 import { IndexPageQueries, IndexPageState } from '@/components/_index/types'
-import { Question, SQLQuestion, SQLTest, SQLTestAnswers, Test, TestAnswers } from '@/types/SQLTypes'
+import { Question, SQLQuestion, SQLTest, SQLTestAndNickname, SQLTestAnswers, Test, TestAndNickname, TestAnswers } from '@/types/SQLTypes'
 import { MBTI } from '@/types/misc'
 import { Utils } from './Utils'
 
@@ -17,7 +17,7 @@ const indexStateToQueryParams = (state: IndexPageState) => {
   if (state.gender) {
     query.push(`${IndexPageQueries.gender}=${state.gender}`)
   }
-  return query.join('&')
+  return query.map(encodeURI).join('--')
 }
 
 const sqlToTest = ({ answers, created_at, id, status, user_id }: Partial<SQLTest>): Partial<Test> => ({
@@ -26,6 +26,22 @@ const sqlToTest = ({ answers, created_at, id, status, user_id }: Partial<SQLTest
   id: Utils.fromSQLString(id || null),
   status,
   userId: Utils.fromSQLString(user_id || null),
+})
+
+const sqlToTestAndNickname = ({
+  answers,
+  created_at,
+  id,
+  status,
+  user_id,
+  nick_name,
+}: Partial<SQLTestAndNickname>): Partial<TestAndNickname> => ({
+  answers: Utils.parsedJSONOrUndefined(answers),
+  createdAt: created_at?.toISOString(),
+  id: Utils.fromSQLString(id || null),
+  status,
+  userId: Utils.fromSQLString(user_id || null),
+  nickName: Utils.fromSQLString(nick_name || null),
 })
 
 const sqlToTestAnswers = ({ answers }: SQLTestAnswers): Partial<TestAnswers> => ({
@@ -59,4 +75,5 @@ export const Convert = {
   sqlToTestAnswers,
   sqlToQuestion,
   functionToScore,
+  sqlToTestAndNickname,
 }

@@ -15,6 +15,15 @@ const functionGrid = (): SxProps<Theme> => ({
   },
 })
 
+const resultsGrid = (): SxProps<Theme> => ({
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  display: 'grid',
+  '@media (max-width: 540px)': {
+    gridTemplateColumns: '1fr',
+  },
+})
+
 export const Styles = {
   functionGrid,
+  resultsGrid,
 }

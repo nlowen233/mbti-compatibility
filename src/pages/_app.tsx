@@ -1,12 +1,10 @@
 import { LoadingOverlayWrapper } from '@/components/LoadingOverlay/LoadingOverlayWrapper'
 import { MenuWrapper } from '@/components/MenuWrapper/MenuWrapper'
 import { PopUpWrapper } from '@/components/PopUpWrapper'
-import { ResultsPageQueries } from '@/components/_results/types'
 import { PopUpMessage } from '@/contexts/PopUpContext'
 import { SessionContext } from '@/contexts/SessionContext'
 import { useMountlessEffect } from '@/hooks/useMountlessEffect'
 import { API } from '@/misc/API'
-import { Constants } from '@/misc/Constants'
 import { Paths } from '@/misc/Paths'
 import { Storage } from '@/misc/Storage'
 import { Theme } from '@/misc/Theme'
@@ -34,8 +32,14 @@ export default function App({ Component, pageProps }: AppProps) {
       Storage.clearToken()
       router.push('/api/auth/logout')
     },
-    title: 'Log Out/Retake Test',
-    disabled: router.pathname === Paths.home,
+    title: 'Log Out',
+  }
+
+  const startTestOption: MenuOption = {
+    onClick: () => {
+      router.push(Paths.home)
+    },
+    title: 'Start Test',
   }
 
   useEffect(() => {
@@ -63,16 +67,14 @@ export default function App({ Component, pageProps }: AppProps) {
       setLoadingOverlay(true)
       API.getTestAnswers({ id: testToken as string })
         .then((res) => {
-          if (res.err) {
-            setStatus('could_not_restore_progress')
+          if (res.err || res.res?.status === TestStatus.Finished) {
+            setStatus('did_not_restore_progress')
             Storage.clearToken()
             setTestToken(undefined)
           } else {
             setSavedProgress(res.res?.answers)
             setStatus('successfully_restored_progress')
-            res.res?.status === TestStatus.Finished
-              ? router.push(`${Paths.results}?${ResultsPageQueries.resultsInState}=${Constants.TRUE()}`)
-              : router.push(Paths.test)
+            router.push(Paths.test)
           }
         })
         .finally(() => {
@@ -86,7 +88,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <UserProvider>
         <SessionContext.Provider value={{ setTestToken, testToken, savedProgress, status, setSavedProgress }}>
           <LoadingOverlayWrapper on={loadingOverlay} toggle={setLoadingOverlay}>
-            <MenuWrapper options={[logOutOption]}>
+            <MenuWrapper options={[logOutOption, startTestOption]}>
               <PopUpWrapper clearMessage={() => setMessage(undefined)} pushPopUpMessage={(msg) => setMessage(msg)} popUpMessage={message}>
                 <Component {...pageProps} />
               </PopUpWrapper>

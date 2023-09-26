@@ -1,6 +1,7 @@
 import { Primitive } from '@/types/misc'
 import { Claims } from '@auth0/nextjs-auth0'
 import { Constants } from './Constants'
+import { Paths } from './Paths'
 import { Roles } from './Roles'
 
 const windowExists = () => typeof window === 'object' && window !== null
@@ -104,6 +105,24 @@ const isAdmin = (user?: Claims) => {
   return !roles?.includes(Roles.admin)
 }
 
+const shareResults = async (testID: string): Promise<string | false> => {
+  let error: string | undefined
+  try {
+    await navigator.share({
+      title: 'MBTI Compatibility Test',
+      text: 'Get a ranking of your most compatible MBTI types',
+      url: `https://${window.location.host}${Paths.results}/${testID}`,
+    })
+  } catch (err) {
+    error = err as string
+  }
+  if (!error) {
+    return false
+  } else {
+    return error
+  }
+}
+
 export const Utils = {
   stringOrNull,
   numberOrNull,
@@ -115,4 +134,5 @@ export const Utils = {
   getDistance,
   sigmoidFunction,
   isAdmin,
+  shareResults,
 }

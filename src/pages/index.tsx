@@ -1,6 +1,7 @@
 import { FormSelect } from '@/components/FormSelect'
 import { Head } from '@/components/Head'
 import { MainWrapper } from '@/components/MainWrapper'
+import { IndexPageUtils } from '@/components/_index/misc'
 import { LoadingOverlayContext } from '@/contexts/LoadingOverlayContext'
 import { PopUpContext } from '@/contexts/PopUpContext'
 import { SessionContext } from '@/contexts/SessionContext'
@@ -15,7 +16,7 @@ import { Box, Button, Typography, useTheme } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useReducer, useState } from 'react'
 import { IndexPageReducer } from '../components/_index/reducer'
-import { IndexPageQueryDictionary } from '../components/_index/types'
+import { IndexPageQueryDictionary, IndexPageQueryDictionaryFix } from '../components/_index/types'
 
 export default function Home() {
   const router = useRouter()
@@ -26,10 +27,10 @@ export default function Home() {
   const { toggle } = useContext(LoadingOverlayContext)
   const [isCreatingTest, setIsCreatingTest] = useState(false)
   const [state, dispatch] = useReducer(IndexPageReducer.reducer, IndexPageReducer.INIT_STATE())
-  const query = router.query as IndexPageQueryDictionary
+  const query = router.query as IndexPageQueryDictionaryFix
   const buttonDisabled = !state.age || !state.expectedResult || !state.gender || !state.mbtiType
   const buttonText = !!user ? 'Take the Test!' : 'Get Verified'
-  const redirectURL = `/api/auth/login?returnTo=?${Convert.indexStateToQueryParams(state)}`
+  const redirectURL = `/api/auth/login?returnTo=?code=${Convert.indexStateToQueryParams(state)}`
 
   const onChangeAge = (age: string | undefined) => dispatch({ type: 'setage', age })
   const onChangeGender = (gender: string | undefined) => dispatch({ type: 'setgender', gender })
@@ -57,7 +58,8 @@ export default function Home() {
   }
 
   useEffect(() => {
-    const { age, expected, gender, mbti } = query
+    const { code } = query
+    const { age, expected, gender, mbti } = IndexPageUtils.decodeWorkaround(code || '') as IndexPageQueryDictionary
     if (age) {
       dispatch({ type: 'setage', age })
     }
