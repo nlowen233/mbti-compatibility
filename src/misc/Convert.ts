@@ -59,9 +59,9 @@ const functionToScore = (mbti: keyof MBTI): number => {
     case 'dominant':
       return 1
     case 'auxiliary':
-      return 0.67
+      return 0.75
     case 'tertiary':
-      return 0.33
+      return 0.25
     case 'inferior':
       return 0
     default:

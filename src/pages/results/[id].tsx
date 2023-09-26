@@ -29,7 +29,7 @@ type Props = {
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = await db.connect()
   const res = await SQL.query<Partial<SQLTest>>(client, SQLQueries.getAllTestIDs)
-  console.log(res, '')
+  console.log(console.log(res.res))
   const paths = res.res?.map((node) => ({ params: { id: node.id || '' } })) || []
   client.release()
   return {
@@ -59,6 +59,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
 }
 
 export default function Results({ questionsRes, testRes }: Props) {
+  const router = useRouter()
   const [resultContainerHeight, setResultContainerHeight] = useState(DEFAULT_RESULT_CONTAINER_HEIGHT)
   const { push, isFallback } = useRouter()
   const { user } = useContext(UserContext)
@@ -69,8 +70,8 @@ export default function Results({ questionsRes, testRes }: Props) {
   const answers = test?.answers || []
   const questions = questionsRes.res || []
   const scores = ResultsUtils.deriveCompatibleCognitiveScores(questions, answers)
+
   const matches = ResultsUtils.deriveCompatibilityVectors(scores)
-  const showShareButton = test?.userId === user?.sub
   const getHeader = () => {
     if (isFallback) {
       return `Hang on while we get your results ready...`
@@ -81,12 +82,17 @@ export default function Results({ questionsRes, testRes }: Props) {
     return !!test?.nickName ? `${test.nickName}'s Results` : `Your Results`
   }
 
-  const onShareResults = async () => {
+  const onButtonClick = async () => {
+    if (test?.userId !== user?.sub) {
+      return router.push(Paths.home)
+    }
     if (!test?.id) {
       return pushPopUpMessage({ title: 'Could not find your test ID', message: 'Share failed', type: 'error' })
     }
     Utils.shareResults(test.id)
   }
+
+  const buttonText = test?.userId === user?.sub ? 'Share your results' : 'Take the test!'
 
   useResizeObserver(resultContainerRef, () => {
     setResultContainerHeight(resultContainerRef.current?.clientHeight || DEFAULT_RESULT_CONTAINER_HEIGHT)
@@ -105,10 +111,10 @@ export default function Results({ questionsRes, testRes }: Props) {
               <Typography variant="body1" style={{ textAlign: 'center', padding: '10px 20px 5px 20px' }}>
                 {`Here are your results! Also included, is how closely your romantic preference for each individual cognitive functions aligns with each MBTI's preference`}
               </Typography>
-              {!hideStickyButtonShowStatic && showShareButton && (
+              {!hideStickyButtonShowStatic && (
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
-                  <Button variant="contained" style={{ marginTop: 20 }} onClick={onShareResults}>
-                    Share your results
+                  <Button variant="contained" style={{ marginTop: 20 }} onClick={onButtonClick}>
+                    {buttonText}
                   </Button>
                 </div>
               )}
@@ -128,11 +134,11 @@ export default function Results({ questionsRes, testRes }: Props) {
                     .sort((a, b) => b.compatibilityScore - a.compatibilityScore)
                     .map((match, i) => <ScoreNode match={match} key={match.key} index={i} />)}
                 </Box>
-                {hideStickyButtonShowStatic && showShareButton && (
+                {hideStickyButtonShowStatic && (
                   <div style={{ height: resultContainerHeight }}>
                     <div style={{ position: 'sticky', top: 60, right: 20, marginTop: 20 }}>
-                      <Button variant="contained" onClick={onShareResults}>
-                        Share your results
+                      <Button variant="contained" onClick={onButtonClick}>
+                        {buttonText}
                       </Button>
                     </div>
                   </div>
