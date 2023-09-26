@@ -53,7 +53,12 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   } finally {
     client.release()
   }
-  console.log(questionsRes, testRes)
+  if (questionsRes?.res === undefined) {
+    console.log('questionres.res===undefined')
+  }
+  if (testRes?.res === undefined) {
+    console.log('testRes.res===undefined')
+  }
   const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
   const convertedQuestions = questionsRes?.res?.map(Convert.sqlToQuestion) || []
   return {
