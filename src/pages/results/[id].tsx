@@ -48,6 +48,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
     const convertedQuestions = questionsRes.res?.map(Convert.sqlToQuestion) || []
   } catch (e) {
+    console.log('ERROR')
     console.log(e)
   }
   return {
@@ -67,12 +68,6 @@ export default function Results({ questionsRes, testRes, testProp }: Props) {
   const { pushPopUpMessage } = useContext(PopUpContext)
   const resultContainerRef = useRef<HTMLDivElement>(null)
   const hideStickyButtonShowStatic = useMediaQuery('@media (min-width: 620px)')
-  if (!testRes?.res || !questionsRes?.res) {
-    console.log(testRes, questionsRes, testProp)
-  }
-  if (testProp) {
-    console.log('HAS TEST PROP' + testProp)
-  }
   useResizeObserver(resultContainerRef, () => {
     setResultContainerHeight(resultContainerRef.current?.clientHeight || DEFAULT_RESULT_CONTAINER_HEIGHT)
   })
