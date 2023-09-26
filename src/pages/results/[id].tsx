@@ -60,7 +60,7 @@ export default function Results({ questionsRes, testRes }: Props) {
   const { pushPopUpMessage } = useContext(PopUpContext)
   const resultContainerRef = useRef<HTMLDivElement>(null)
   const hideStickyButtonShowStatic = useMediaQuery('@media (min-width: 620px)')
-  if (!testRes || !questionsRes) {
+  if (!testRes.res || !questionsRes.res) {
     console.log(testRes, questionsRes)
   }
   useResizeObserver(resultContainerRef, () => {
