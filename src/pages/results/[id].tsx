@@ -19,6 +19,7 @@ const DEFAULT_RESULT_CONTAINER_HEIGHT = 400
 type Props = {
   questionsRes: APIRes<Partial<Question>[]>
   testRes: APIRes<Partial<TestAndNickname> | null>
+  testProp: string
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -48,11 +49,12 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     props: {
       testRes: { err: !!testRes?.err, res: test, message: testRes?.message || null },
       questionsRes: { ...questionsRes, res: convertedQuestions },
+      testProp: 'TEST',
     },
   }
 }
 
-export default function Results({ questionsRes, testRes }: Props) {
+export default function Results({ questionsRes, testRes, testProp }: Props) {
   const router = useRouter()
   const [resultContainerHeight, setResultContainerHeight] = useState(DEFAULT_RESULT_CONTAINER_HEIGHT)
   const { push, isFallback } = useRouter()
@@ -62,6 +64,9 @@ export default function Results({ questionsRes, testRes }: Props) {
   const hideStickyButtonShowStatic = useMediaQuery('@media (min-width: 620px)')
   if (!testRes?.res || !questionsRes?.res) {
     console.log(testRes, questionsRes)
+  }
+  if (testProp) {
+    console.log('HAS TEST PROP' + testProp)
   }
   useResizeObserver(resultContainerRef, () => {
     setResultContainerHeight(resultContainerRef.current?.clientHeight || DEFAULT_RESULT_CONTAINER_HEIGHT)
