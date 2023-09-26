@@ -68,7 +68,6 @@ export default function Results({ questionsRes, testRes }: Props) {
   const questions = questionsRes.res || []
   const scores = ResultsUtils.deriveCompatibleCognitiveScores(questions, answers)
 
-  const matches = ResultsUtils.deriveCompatibilityVectors(scores)
   const getHeader = () => {
     if (isFallback) {
       return `Hang on while we get your results ready...`
