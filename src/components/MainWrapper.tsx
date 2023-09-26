@@ -1,15 +1,11 @@
+import { useTheme } from '@mui/material'
 import React from 'react'
-import {useTheme} from '@mui/material'
 
 type Props = {
-    children: React.ReactNode
+  children: React.ReactNode
 }
 
-export const MainWrapper = ({children}:Props) => {
-    const {palette} = useTheme()
-  return (
-    <main style={{backgroundColor:palette.background.default,minHeight:'100vh'}}>
-        {children}
-    </main>
-  )
+export const MainWrapper = ({ children }: Props) => {
+  const { palette } = useTheme()
+  return <main style={{ backgroundColor: palette.background.default, minHeight: '100vh', minWidth: 250 }}>{children}</main>
 }

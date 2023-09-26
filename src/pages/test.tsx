@@ -129,18 +129,17 @@ export default function Test({ err, message, res }: Props) {
           MBTI Compatibility Test
         </Typography>
         {currentQuestions?.map((q, i) => (
-          <div key={q.id}>
-            <SelectableQuestion
-              onSelectScore={(score) => onScoreQuestion(q.id as string, score)}
-              key={q.id}
-              question={q}
-              score={state.answers.find((a) => a.id === q.id)?.score}
-              questionIndex={i + 1 + page * PAGINATE_ON}
-              style={{
-                paddingBottom: 20,
-              }}
-            />
-          </div>
+          <SelectableQuestion
+            onSelectScore={(score) => onScoreQuestion(q.id as string, score)}
+            key={q.id}
+            question={q}
+            score={state.answers.find((a) => a.id === q.id)?.score}
+            questionIndex={i + 1 + page * PAGINATE_ON}
+            style={{
+              paddingBottom: 20,
+              minWidth: 200,
+            }}
+          />
         ))}
         <div style={{ height: 80 }} />
         <Box
