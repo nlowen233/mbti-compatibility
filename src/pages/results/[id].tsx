@@ -51,7 +51,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   } catch (e) {
     console.log(e)
   } finally {
-    console.log('finally')
+    console.log(`${!!questionsRes?.res},${!!testRes?.res}`)
     client.release()
   }
   const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
