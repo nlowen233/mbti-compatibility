@@ -29,9 +29,8 @@ type Props = {
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = await db.connect()
   const res = await SQL.query<Partial<SQLTest>>(client, SQLQueries.getAllTestIDs)
-  console.log(`${!!res?.res},${!!res}`)
   const paths = res.res?.map((node) => ({ params: { id: node.id || '' } })) || []
-  //client.release()
+  client.release()
   return {
     paths,
     fallback: true,
@@ -46,21 +45,14 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     client,
     SQLQueries.getTestAndNicknameByID(testID as string),
   )
-  let [questionsRes, testRes]: [APIRes<SQLQuestion[]> | undefined, APIRes<SQLTestAndNickname[]> | undefined] = [undefined, undefined]
-  try {
-    ;[questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
-  } catch (e) {
-    console.log(e)
-  } finally {
-    console.log(`${!!questionsRes?.res},${!!testRes?.res}`)
-    //client.release()
-  }
+  const [questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
+  client.release()
   const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
-  const convertedQuestions = questionsRes?.res?.map(Convert.sqlToQuestion) || []
+  const convertedQuestions = questionsRes.res?.map(Convert.sqlToQuestion) || []
   return {
     props: {
       testRes: { err: !!testRes?.err, res: test, message: testRes?.message || null },
-      questionsRes: { res: convertedQuestions, err: !!questionsRes?.err, message: questionsRes?.message },
+      questionsRes: { ...questionsRes, res: convertedQuestions },
     },
   }
 }
