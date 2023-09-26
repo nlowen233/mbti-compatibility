@@ -58,6 +58,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
 }
 
 export default function Results(props: Props | undefined) {
+  console.log('has props ' + !!props)
   const router = useRouter()
   const [resultContainerHeight, setResultContainerHeight] = useState(DEFAULT_RESULT_CONTAINER_HEIGHT)
   const { push, isFallback } = useRouter()
