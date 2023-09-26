@@ -45,17 +45,20 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     client,
     SQLQueries.getTestAndNicknameByID(testID as string),
   )
-  const [questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
-  client.release()
-  if (questionsRes.res === undefined) {
-    console.log(questionsRes)
+  let [questionsRes, testRes]: [APIRes<SQLQuestion[]> | undefined, APIRes<SQLTestAndNickname[]> | undefined] = [undefined, undefined]
+  try {
+    ;[questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
+  } catch (e) {
+    console.log(e)
+  } finally {
+    client.release()
   }
   const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
-  const convertedQuestions = questionsRes.res?.map(Convert.sqlToQuestion) || []
+  const convertedQuestions = questionsRes?.res?.map(Convert.sqlToQuestion) || []
   return {
     props: {
       testRes: { err: !!testRes?.err, res: test, message: testRes?.message || null },
-      questionsRes: { ...questionsRes, res: convertedQuestions },
+      questionsRes: { res: convertedQuestions, err: !!questionsRes?.err, message: questionsRes?.message },
     },
   }
 }
