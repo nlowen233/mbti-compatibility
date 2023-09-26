@@ -50,7 +50,9 @@ export default function Results() {
   return (
     <>
       <Head />
-      <MainWrapper></MainWrapper>
+      <MainWrapper>
+        <>hello</>
+      </MainWrapper>
     </>
   )
 }
