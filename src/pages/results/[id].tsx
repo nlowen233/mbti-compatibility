@@ -34,7 +34,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async (context) => {
-  console.log(context.params)
+  console.log('params' + context.params)
   const client = await db.connect()
   const questionPromise = SQL.query<SQLQuestion>(client, SQLQueries.getQuestions)
   const testID = context?.params?.id as string
