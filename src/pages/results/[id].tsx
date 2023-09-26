@@ -3,10 +3,8 @@ import { MainWrapper } from '@/components/MainWrapper'
 import { PopUpContext } from '@/contexts/PopUpContext'
 import { useResizeObserver } from '@/hooks/useResizeObserver'
 import { Convert } from '@/misc/Convert'
-import { Paths } from '@/misc/Paths'
 import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
-import { Utils } from '@/misc/Utils'
 import { Question, SQLQuestion, SQLTest, SQLTestAndNickname, TestAndNickname } from '@/types/SQLTypes'
 import { APIRes } from '@/types/misc'
 import { UserContext } from '@auth0/nextjs-auth0/client'
@@ -62,31 +60,6 @@ export default function Results({ questionsRes, testRes }: Props) {
   const { pushPopUpMessage } = useContext(PopUpContext)
   const resultContainerRef = useRef<HTMLDivElement>(null)
   const hideStickyButtonShowStatic = useMediaQuery('@media (min-width: 620px)')
-  const test = testRes.res
-  const answers = test?.answers || []
-  const questions = questionsRes.res || []
-
-  const getHeader = () => {
-    if (isFallback) {
-      return `Hang on while we get your results ready...`
-    }
-    if (!answers.length) {
-      return ``
-    }
-    return !!test?.nickName ? `${test.nickName}'s Results` : `Your Results`
-  }
-
-  const onButtonClick = async () => {
-    if (test?.userId !== user?.sub) {
-      return router.push(Paths.home)
-    }
-    if (!test?.id) {
-      return pushPopUpMessage({ title: 'Could not find your test ID', message: 'Share failed', type: 'error' })
-    }
-    Utils.shareResults(test.id)
-  }
-
-  const buttonText = test?.userId === user?.sub ? 'Share your results' : 'Take the test!'
 
   useResizeObserver(resultContainerRef, () => {
     setResultContainerHeight(resultContainerRef.current?.clientHeight || DEFAULT_RESULT_CONTAINER_HEIGHT)
