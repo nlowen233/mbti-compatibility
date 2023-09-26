@@ -1,6 +1,5 @@
 import { Head } from '@/components/Head'
 import { MainWrapper } from '@/components/MainWrapper'
-import { ResultsUtils } from '@/components/_results/misc'
 import { PopUpContext } from '@/contexts/PopUpContext'
 import { useResizeObserver } from '@/hooks/useResizeObserver'
 import { Convert } from '@/misc/Convert'
@@ -66,7 +65,6 @@ export default function Results({ questionsRes, testRes }: Props) {
   const test = testRes.res
   const answers = test?.answers || []
   const questions = questionsRes.res || []
-  const scores = ResultsUtils.deriveCompatibleCognitiveScores(questions, answers)
 
   const getHeader = () => {
     if (isFallback) {
