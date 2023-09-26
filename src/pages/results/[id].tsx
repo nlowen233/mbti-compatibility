@@ -34,12 +34,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async (context) => {
+  console.log(context.params)
   const client = await db.connect()
   const questionPromise = SQL.query<SQLQuestion>(client, SQLQueries.getQuestions)
   const testID = context?.params?.id as string
   const testPromise: Promise<APIRes<SQLTestAndNickname[]>> = SQL.query<SQLTestAndNickname>(
     client,
-    SQLQueries.getTestAndNicknameByID(testID as string),
+    SQLQueries.getTestAndNicknameByID(testID),
   )
   const [questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
   client.release()
