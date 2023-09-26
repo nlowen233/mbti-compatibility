@@ -57,7 +57,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
   }
 }
 
-export default function Results({ questionsRes, testRes }: Props) {
+export default function Results(props: Props | undefined) {
   const router = useRouter()
   const [resultContainerHeight, setResultContainerHeight] = useState(DEFAULT_RESULT_CONTAINER_HEIGHT)
   const { push, isFallback } = useRouter()
@@ -65,9 +65,9 @@ export default function Results({ questionsRes, testRes }: Props) {
   const { pushPopUpMessage } = useContext(PopUpContext)
   const resultContainerRef = useRef<HTMLDivElement>(null)
   const hideStickyButtonShowStatic = useMediaQuery('@media (min-width: 620px)')
-  const test = testRes.res
+  const test = props?.testRes.res
   const answers = test?.answers || []
-  const questions = questionsRes.res || []
+  const questions = props?.questionsRes.res || []
   const scores = ResultsUtils.deriveCompatibleCognitiveScores(questions, answers)
 
   const matches = ResultsUtils.deriveCompatibilityVectors(scores)
