@@ -28,7 +28,6 @@ export const SelectableQuestion = ({ onSelectScore, question, score, questionInd
       >
         <Typography
           variant="h4"
-          textAlign="center"
           sx={{
             paddingBottom: 2,
             maxWidth: 600,
@@ -52,7 +51,13 @@ export const SelectableQuestion = ({ onSelectScore, question, score, questionInd
               width: 360,
             },
             '@media (max-width: 390px)': {
+              width: 280,
+            },
+            '@media (max-width: 300px)': {
               width: 250,
+            },
+            '@media (max-width: 275px)': {
+              width: 210,
             },
           }}
         >

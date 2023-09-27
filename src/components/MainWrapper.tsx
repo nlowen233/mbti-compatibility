@@ -7,5 +7,9 @@ type Props = {
 
 export const MainWrapper = ({ children }: Props) => {
   const { palette } = useTheme()
-  return <main style={{ backgroundColor: palette.background.default, minHeight: '100vh', minWidth: 250 }}>{children}</main>
+  return (
+    <main style={{ backgroundColor: palette.background.default, minHeight: '100vh', minWidth: 250, paddingTop: 30, paddingBottom: 30 }}>
+      {children}
+    </main>
+  )
 }
