@@ -21,7 +21,7 @@ import { IndexPageQueryDictionary, IndexPageQueryDictionaryFix } from '../compon
 export default function Home() {
   const router = useRouter()
   const { palette } = useTheme()
-  const { user } = useContext(UserContext)
+  const { user, isLoading } = useContext(UserContext)
   const { setTestToken, setSavedProgress } = useContext(SessionContext)
   const { pushPopUpMessage } = useContext(PopUpContext)
   const { toggle } = useContext(LoadingOverlayContext)
@@ -75,8 +75,8 @@ export default function Home() {
   }, [query])
 
   useMountlessEffect(() => {
-    isCreatingTest ? toggle(true) : toggle(false)
-  }, [isCreatingTest])
+    isCreatingTest || isLoading ? toggle(true) : toggle(false)
+  }, [isCreatingTest, isLoading])
 
   return (
     <>
@@ -134,9 +134,11 @@ export default function Home() {
             >
               {buttonText}
             </Button>
-            <Typography variant="body1" textAlign={'center'} style={{ paddingTop: 10, paddingRight: 20, paddingLeft: 20 }}>
-              {`*By getting verified, you acknowledge that your test outcomes may be anonymously included in survey data. You also consent to your data being used to tailor potential future services offered.`}
-            </Typography>
+            {!user && (
+              <Typography variant="subtitle2" style={{ paddingTop: 10, paddingRight: 20, paddingLeft: 20 }}>
+                {Constants.disclaimer}
+              </Typography>
+            )}
           </div>
           <div style={{ paddingBottom: 20 }} />
         </div>
