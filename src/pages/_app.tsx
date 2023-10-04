@@ -5,6 +5,7 @@ import { PopUpMessage } from '@/contexts/PopUpContext'
 import { SessionContext } from '@/contexts/SessionContext'
 import { useMountlessEffect } from '@/hooks/useMountlessEffect'
 import { API } from '@/misc/API'
+import { Constants } from '@/misc/Constants'
 import { Paths } from '@/misc/Paths'
 import { Storage } from '@/misc/Storage'
 import { Theme } from '@/misc/Theme'
@@ -40,6 +41,20 @@ export default function App({ Component, pageProps }: AppProps) {
       router.push(Paths.home)
     },
     title: 'Start Test',
+  }
+
+  const supportEmail: MenuOption = {
+    onClick: () => {
+      window.location.href = `mailto:${Constants.supportEmail}`
+    },
+    title: 'Contact Support',
+  }
+
+  const github: MenuOption = {
+    onClick: () => {
+      window.open(`https://github.com/nlowen233`, '_blank')
+    },
+    title: 'Open my Github',
   }
 
   useEffect(() => {
@@ -88,7 +103,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <UserProvider>
         <SessionContext.Provider value={{ setTestToken, testToken, savedProgress, status, setSavedProgress }}>
           <LoadingOverlayWrapper on={loadingOverlay} toggle={setLoadingOverlay}>
-            <MenuWrapper options={[logOutOption, startTestOption]}>
+            <MenuWrapper options={[logOutOption, startTestOption, supportEmail, github]}>
               <PopUpWrapper clearMessage={() => setMessage(undefined)} pushPopUpMessage={(msg) => setMessage(msg)} popUpMessage={message}>
                 <Component {...pageProps} />
               </PopUpWrapper>
