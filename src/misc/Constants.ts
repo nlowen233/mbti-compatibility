@@ -1,4 +1,5 @@
-import { Scores } from '@/types/SQLTypes'
+import { MBTIScoreData, ScoreNode } from '@/components/_results/misc'
+import { Scores, User } from '@/types/SQLTypes'
 import { MBTI, Option } from '@/types/misc'
 import { MBTIs } from './MBTI'
 
@@ -83,6 +84,9 @@ const SIGMOID_WEIGHT = () => 1
 
 const TRUE = () => 'true'
 
+const explainResultsPromptTemplate = (user: User, scores: ScoreNode[], results: MBTIScoreData[]) =>
+  `Gender: ${user.gender}\nAge: ${user.age}\nMBTI Type: ${user.mbtiType}\nExpected Most Compatible MBTI Type: ${user.expectedMbtiType}\nscores:\n${scores}\nresults:\n${results}`
+
 export const Constants = {
   MBTIOptions,
   Ages,
@@ -97,4 +101,5 @@ export const Constants = {
   MBTIArray,
   SIGMOID_WEIGHT,
   TRUE,
+  explainResultsPromptTemplate,
 }

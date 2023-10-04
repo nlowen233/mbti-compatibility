@@ -2,7 +2,6 @@ import { Head } from '@/components/Head'
 import { LoadingOverlay } from '@/components/LoadingOverlay/LoadingOverlay'
 import { MainWrapper } from '@/components/MainWrapper'
 import { ScoreNode } from '@/components/ScoreNode'
-import { ResultsUtils } from '@/components/_results/misc'
 import { PopUpContext } from '@/contexts/PopUpContext'
 import { useResizeObserver } from '@/hooks/useResizeObserver'
 import { Convert } from '@/misc/Convert'
@@ -10,7 +9,7 @@ import { Paths } from '@/misc/Paths'
 import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
 import { Utils } from '@/misc/Utils'
-import { Question, SQLQuestion, SQLTest, SQLTestAndNickname, TestAndNickname } from '@/types/SQLTypes'
+import { SQLTest, SQLTestAndNickname, TestAndNickname } from '@/types/SQLTypes'
 import { APIRes } from '@/types/misc'
 import { UserContext } from '@auth0/nextjs-auth0/client'
 import { Box, Button, Typography, useMediaQuery } from '@mui/material'
@@ -21,10 +20,7 @@ import { useContext, useRef, useState } from 'react'
 
 const DEFAULT_RESULT_CONTAINER_HEIGHT = 400
 
-type Props = {
-  questionsRes: APIRes<Partial<Question>[]>
-  testRes: APIRes<Partial<TestAndNickname> | null>
-}
+type Props = APIRes<Partial<TestAndNickname> | null>
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = await db.connect()
@@ -39,21 +35,15 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps: GetStaticProps<Props> = async (context) => {
   const client = await db.connect()
-  const questionPromise = SQL.query<SQLQuestion>(client, SQLQueries.getQuestions)
   const testID = context?.params?.id as string
-  const testPromise: Promise<APIRes<SQLTestAndNickname[]>> = SQL.query<SQLTestAndNickname>(
+  const testRes: APIRes<SQLTestAndNickname[]> = await SQL.query<SQLTestAndNickname>(
     client,
     SQLQueries.getTestAndNicknameByID(testID as string),
   )
-  const [questionsRes, testRes] = await Promise.all([questionPromise, testPromise])
   client.release()
   const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
-  const convertedQuestions = questionsRes.res?.map(Convert.sqlToQuestion) || []
   return {
-    props: {
-      testRes: { err: !!testRes?.err, res: test, message: testRes?.message || null },
-      questionsRes: { ...questionsRes, res: convertedQuestions },
-    },
+    props: { err: !!testRes?.err, res: test, message: testRes?.message || null },
   }
 }
 
@@ -65,12 +55,9 @@ export default function Results(props: Partial<Props>) {
   const { pushPopUpMessage } = useContext(PopUpContext)
   const resultContainerRef = useRef<HTMLDivElement>(null)
   const hideStickyButtonShowStatic = useMediaQuery('@media (min-width: 620px)')
-  const test = props?.testRes?.res
+  const test = props.res
   const answers = test?.answers || []
-  const questions = props?.questionsRes?.res || []
-  const scores = ResultsUtils.deriveCompatibleCognitiveScores(questions, answers)
 
-  const matches = ResultsUtils.deriveCompatibilityVectors(scores)
   const getHeader = () => {
     if (isFallback) {
       return `Hang on while we get your results ready...`
@@ -129,9 +116,11 @@ export default function Results(props: Partial<Props>) {
                     },
                   }}
                 >
-                  {...matches
+                  {[...(test?.results || [])]
                     .sort((a, b) => b.compatibilityScore - a.compatibilityScore)
-                    .map((match, i) => <ScoreNode match={match} key={match.key} index={i} />)}
+                    .map((match, i) => (
+                      <ScoreNode match={match} key={match.key} index={i} />
+                    ))}
                 </Box>
                 {hideStickyButtonShowStatic && (
                   <div style={{ height: resultContainerHeight }}>

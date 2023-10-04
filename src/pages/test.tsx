@@ -2,6 +2,7 @@ import { Head } from '@/components/Head'
 import { MainWrapper } from '@/components/MainWrapper'
 import { ProgressBar } from '@/components/ProgressBar'
 import { SelectableQuestion } from '@/components/SelectableQuestion'
+import { ResultsUtils } from '@/components/_results/misc'
 import { TestPageUtils } from '@/components/_test/misc'
 import { TestPageReducer } from '@/components/_test/reducer'
 import { LoadingOverlayContext } from '@/contexts/LoadingOverlayContext'
@@ -76,7 +77,9 @@ export default function Test({ err, message, res }: Props) {
 
   const onFinish = async () => {
     setIsLoading(true)
-    const res = await API.updateTest({ answers: state.answers, id: testToken, status: TestStatus.Finished })
+    const functionScores = ResultsUtils.deriveCompatibleCognitiveScores(questions || [], state.answers)
+    const results = ResultsUtils.deriveCompatibilityVectors(functionScores)
+    const res = await API.updateTest({ answers: state.answers, id: testToken, status: TestStatus.Finished, functionScores, results })
     setIsLoading(false)
     if (res.err) {
       pushPopUpMessage({ message: res.message || Constants.unknownError, title: 'Error finalizing your test', type: 'error' })

@@ -43,3 +43,10 @@ export type MBTI = {
   trickster?: keyof Scores
   demon?: keyof Scores
 }
+
+export const enum ErrorSeverity {
+  Warning = 0,
+  Error = 1,
+  Severe = 2,
+  Critical = 3,
+}

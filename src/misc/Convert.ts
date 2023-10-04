@@ -1,5 +1,16 @@
 import { IndexPageQueries, IndexPageState } from '@/components/_index/types'
-import { Question, SQLQuestion, SQLTest, SQLTestAndNickname, SQLTestAnswers, Test, TestAndNickname, TestAnswers } from '@/types/SQLTypes'
+import {
+  Question,
+  SQLQuestion,
+  SQLTest,
+  SQLTestAndNickname,
+  SQLTestAnswers,
+  SQLUser,
+  Test,
+  TestAndNickname,
+  TestAnswers,
+  User,
+} from '@/types/SQLTypes'
 import { MBTI } from '@/types/misc'
 import { Utils } from './Utils'
 
@@ -69,6 +80,14 @@ const functionToScore = (mbti: keyof MBTI): number => {
   }
 }
 
+const sqlToUser = ({ age, expected_mbti_type, gender, id, mbti_type }: SQLUser): User => ({
+  age: age || '',
+  expectedMbtiType: expected_mbti_type || '',
+  gender: gender || '',
+  id,
+  mbtiType: mbti_type || '',
+})
+
 export const Convert = {
   indexStateToQueryParams,
   sqlToTest,
@@ -76,4 +95,5 @@ export const Convert = {
   sqlToQuestion,
   functionToScore,
   sqlToTestAndNickname,
+  sqlToUser,
 }
