@@ -37,17 +37,19 @@ So if our test-taker had a 80% in vector[0] and the key was ISFP, the test-taker
 Finally, the "compatibilityScore" field is a weighted average of the values in the vector. Where [0] is counted 8 times, [1] 4 times, [2] 2 times, and [3] 1 time. This is to bias the final compatibility in favor of functions most used by the given type (ISFP in the example case). This score acts as the final ranking for the type-in-question. Therefore, which ever of these types in the results array has the highest "compatibilityScore" score value, is, in your opinion, the best match for the test-taker.
 
 Now that I've explained the data, your job will be to deliver an approximately 300-500 word in-depth explanation of the meaning of the results. In your response, cover topics like these (they will be phrased as if I am in the test-taker):
-1. Who is my best MBTI match and why? (the best match will always be the MBTI type with the highest "compatibilityScore")
-2. What are my most/least preferred cognitive functions in a potential partner? (the best match will always be the MBTI type with the lowest "compatibilityScore")
-3. What's one thing that stands out about my data?
-4. What advice can you give me about finding a partner based on what I seem to prefer?
-5. Who is my worst MBTI match and why?
-6. Contrast my expected top result (as given) and my actual top result
-7. Are my preferences common or on the rare side? (If the compatibilityScores of rare types are generally higher than that of the low-rarity types, the preferences of the user should be considered rare)
-8. What does my MBTI type (as given) generally like in a partner, and how does that contrast with my responses?
-9. Do I have any very strong preferences?
-10. How large is the range between my most and least compatible MBTI types? If it's large explain why that might be, and likewise if it's small.
---
+- Who is my best MBTI match and why? (the best match will always be the MBTI type with the highest "compatibilityScore")
+- What are my most/least preferred cognitive functions in a potential partner?
+- What advice can you give me about finding a partner based on what I seem to prefer?
+- Who is my worst MBTI match and why? (the worst match will always be the MBTI type with the lowest "compatibilityScore")
+- Contrast my expected top result (as given) and my actual top result
+- Are my preferences common or on the rare side? (If the compatibilityScores of rare types are generally higher than that of the low-rarity types, the preferences of the user should be considered rare)
+- What does my MBTI type (as given) generally like in a partner, and how does that contrast with my responses?
+- How large is the range between my most and least compatible MBTI types? If it's large explain why that might be, and likewise if it's small.
+- How would the life philosophy of some of my highest ranking MBTI matches differ from my life philosophy?
+- What common interests might I share with some of my highest ranking MBTI matches?
+- What would living with some of my highest ranking MBTI matches be like?
+- Where would I be most likely to find some of my highest ranking MBTI matches if I wanted to meet them?
+- Do any of my highest ranking MBTI types prefer my MBTI type? Or are they generally thought to not be compatible with my MBTI type?
 
 To help with the rarity question use this rarity data:
 
@@ -93,19 +95,7 @@ ENTJ — 1.4%
 
 ----
 
-Please break down these topics I've given in a way that is easy to understand for a MBTI beginner, but also interesting enough for an intermediate/advanced MBTI student. You are allowed to use/not use any of those topics I've given based on what you think will be most interesting. Feel free to add any topics, if you find that there is some topic that may be of interest to mention; do this sparingly. 
-
-Finally within the confines of the topics I've given, and any you've created; focus on these themes and motifs in your answer:
-1. Living together with your partner
-2. Being sexual/romantic with your partner
-3. Exploring the world with your partner
-4. How your partner's philosophy may differ from yours
-5. What goals your partner might have in life
-6. What common interests could you possibly share
-7. Introversion versus extroversion
-8. Ability to make friends and go out into public confidently
-9. how different partners may approach conflict (arguments, issues)
-10. How different partners think express love and their feelings
+Please break down these topics I've given in a way that is easy to understand for a MBTI beginner, but also interesting enough for an intermediate/advanced MBTI student. You are allowed to use/not use any of those topics I've given based on what you think will be most interesting.
 
 Keep the lens of MBTI always within your focus, even if you must use stereotypical caricatures of each type to make your point (the user expects this, and this is for entertainment). If the gender is male or female, assume this will be a monogamous straight relationship (the user is aware of this assumption). Although I have given you numbered lists, this is just organization for you; please do not structure your response as a numbered list. Instead, you should write this in essay format, make it appear more free-flowing. Your "scores" data is not visible to the user, so do not reference this directly in your response. Also, when referring to numbers from your "results" data (which is allowed) please use percentages as opposed to decimal numbers.
 
