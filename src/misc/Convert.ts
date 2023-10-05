@@ -31,12 +31,24 @@ const indexStateToQueryParams = (state: IndexPageState) => {
   return query.map(encodeURI).join('--')
 }
 
-const sqlToTest = ({ answers, created_at, id, status, user_id }: Partial<SQLTest>): Partial<Test> => ({
+const sqlToTest = ({
+  answers,
+  created_at,
+  id,
+  status,
+  user_id,
+  function_scores,
+  gpt_response,
+  results_data,
+}: Partial<SQLTest>): Partial<Test> => ({
   answers: Utils.parsedJSONOrUndefined(answers),
-  createdAt: created_at?.toISOString(),
+  createdAt: created_at,
   id: Utils.fromSQLString(id || null),
   status,
   userId: Utils.fromSQLString(user_id || null),
+  functionScores: Utils.parsedJSONOrUndefined(function_scores),
+  gptResponse: Utils.fromSQLString(gpt_response || null),
+  results: Utils.parsedJSONOrUndefined(results_data),
 })
 
 const sqlToTestAndNickname = ({
@@ -46,13 +58,19 @@ const sqlToTestAndNickname = ({
   status,
   user_id,
   nick_name,
+  function_scores,
+  gpt_response,
+  results_data,
 }: Partial<SQLTestAndNickname>): Partial<TestAndNickname> => ({
   answers: Utils.parsedJSONOrUndefined(answers),
-  createdAt: created_at?.toISOString(),
+  createdAt: created_at,
   id: Utils.fromSQLString(id || null),
   status,
   userId: Utils.fromSQLString(user_id || null),
   nickName: Utils.fromSQLString(nick_name || null),
+  functionScores: Utils.parsedJSONOrUndefined(function_scores),
+  gptResponse: Utils.fromSQLString(gpt_response || null),
+  results: Utils.parsedJSONOrUndefined(results_data),
 })
 
 const sqlToTestAnswers = ({ answers }: SQLTestAnswers): Partial<TestAnswers> => ({

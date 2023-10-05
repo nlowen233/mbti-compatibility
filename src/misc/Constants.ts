@@ -85,7 +85,11 @@ const SIGMOID_WEIGHT = () => 1
 const TRUE = () => 'true'
 
 const explainResultsPromptTemplate = (user: User, scores: ScoreNode[], results: MBTIScoreData[]) =>
-  `Gender: ${user.gender}\nAge: ${user.age}\nMBTI Type: ${user.mbtiType}\nExpected Most Compatible MBTI Type: ${user.expectedMbtiType}\nscores:\n${scores}\nresults:\n${results}`
+  `Gender: ${user.gender || 'null'}\nAge: ${user.age || 'null'}\nMBTI Type: ${
+    user.mbtiType || 'null'
+  }\nExpected Most Compatible MBTI Type: ${user.expectedMbtiType || 'null'}\nscores:\n${
+    scores ? JSON.stringify(scores) : 'null'
+  }\nresults:\n${results ? JSON.stringify(results) : 'null'}`
 
 export const Constants = {
   MBTIOptions,

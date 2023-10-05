@@ -1,6 +1,5 @@
 import { IndexPageState } from '@/components/_index/types'
 import { Question, Test } from '@/types/SQLTypes'
-import { UserProfile } from '@auth0/nextjs-auth0/client'
 import axios, { AxiosError, AxiosResponse } from 'axios'
 import { APIRes } from '../types/misc'
 import { Constants } from './Constants'
@@ -55,7 +54,7 @@ async function createAPIFunction<Res = {}, Req = {}, Query = {}>({
   }
 }
 
-const loginStartTest = (req: Partial<IndexPageState & UserProfile>) =>
+const loginStartTest = (req: Partial<IndexPageState>) =>
   createAPIFunction<Partial<Test>>({ route: '/api/loginStartTest', body: req, method: 'POST' })
 const getTestAnswers = ({ id }: Partial<Test>) =>
   createAPIFunction<Partial<Test>>({ route: '/api/tests/get', method: 'GET', query: { id } })

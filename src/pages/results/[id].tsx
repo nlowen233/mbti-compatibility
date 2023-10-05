@@ -1,26 +1,25 @@
 import { Head } from '@/components/Head'
 import { LoadingOverlay } from '@/components/LoadingOverlay/LoadingOverlay'
 import { MainWrapper } from '@/components/MainWrapper'
-import { ScoreNode } from '@/components/ScoreNode'
+import { ResultsView } from '@/components/_results/ResultsView'
 import { PopUpContext } from '@/contexts/PopUpContext'
-import { useResizeObserver } from '@/hooks/useResizeObserver'
 import { Convert } from '@/misc/Convert'
 import { Paths } from '@/misc/Paths'
 import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
 import { Utils } from '@/misc/Utils'
-import { SQLTest, SQLTestAndNickname, TestAndNickname } from '@/types/SQLTypes'
+import { SQLTest, SQLTestAndNickname } from '@/types/SQLTypes'
 import { APIRes } from '@/types/misc'
 import { UserContext } from '@auth0/nextjs-auth0/client'
-import { Box, Button, Typography, useMediaQuery } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import { db } from '@vercel/postgres'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import { useRouter } from 'next/router'
-import { useContext, useRef, useState } from 'react'
+import { useContext } from 'react'
 
 const DEFAULT_RESULT_CONTAINER_HEIGHT = 400
 
-type Props = APIRes<Partial<TestAndNickname> | null>
+type Props = APIRes<Partial<SQLTestAndNickname> | null>
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = await db.connect()
@@ -41,7 +40,7 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
     SQLQueries.getTestAndNicknameByID(testID as string),
   )
   client.release()
-  const test = testRes?.res?.length ? Convert.sqlToTestAndNickname(testRes.res[0]) : null
+  const test = testRes.res?.length ? testRes.res[0] : null
   return {
     props: { err: !!testRes?.err, res: test, message: testRes?.message || null },
   }
@@ -49,13 +48,10 @@ export const getStaticProps: GetStaticProps<Props> = async (context) => {
 
 export default function Results(props: Partial<Props>) {
   const router = useRouter()
-  const [resultContainerHeight, setResultContainerHeight] = useState(DEFAULT_RESULT_CONTAINER_HEIGHT)
   const { push, isFallback } = useRouter()
   const { user } = useContext(UserContext)
   const { pushPopUpMessage } = useContext(PopUpContext)
-  const resultContainerRef = useRef<HTMLDivElement>(null)
-  const hideStickyButtonShowStatic = useMediaQuery('@media (min-width: 620px)')
-  const test = props.res
+  const test = props.res ? Convert.sqlToTestAndNickname(props.res) : undefined
   const answers = test?.answers || []
 
   const getHeader = () => {
@@ -80,9 +76,6 @@ export default function Results(props: Partial<Props>) {
 
   const buttonText = test?.userId === user?.sub ? 'Share your results' : 'Take the test!'
 
-  useResizeObserver(resultContainerRef, () => {
-    setResultContainerHeight(resultContainerRef.current?.clientHeight || DEFAULT_RESULT_CONTAINER_HEIGHT)
-  })
   return (
     <>
       <Head />
@@ -93,47 +86,18 @@ export default function Results(props: Partial<Props>) {
         </Typography>
         {!isFallback &&
           (!!answers.length ? (
-            <>
-              <Typography variant="body1" style={{ textAlign: 'center', padding: '10px 20px 5px 20px' }}>
-                {`Here are your results! Also included, is how closely your romantic preference for each individual cognitive functions aligns with each MBTI's preference`}
-              </Typography>
-              {!hideStickyButtonShowStatic && (
+            <div style={{ height: '90vh', minHeight: 600, overflowY: 'hidden' }}>
+              <div>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
                   <Button variant="contained" style={{ marginTop: 20 }} onClick={onButtonClick}>
                     {buttonText}
                   </Button>
                 </div>
-              )}
-              <div style={{ display: 'flex' }} ref={resultContainerRef}>
-                <Box
-                  sx={{
-                    width: 600,
-                    '@media (max-width: 820px)': {
-                      width: 400,
-                    },
-                    '@media (max-width: 430px)': {
-                      width: '100%',
-                    },
-                  }}
-                >
-                  {[...(test?.results || [])]
-                    .sort((a, b) => b.compatibilityScore - a.compatibilityScore)
-                    .map((match, i) => (
-                      <ScoreNode match={match} key={match.key} index={i} />
-                    ))}
-                </Box>
-                {hideStickyButtonShowStatic && (
-                  <div style={{ height: resultContainerHeight }}>
-                    <div style={{ position: 'sticky', top: 60, right: 20, marginTop: 20 }}>
-                      <Button variant="contained" onClick={onButtonClick}>
-                        {buttonText}
-                      </Button>
-                    </div>
-                  </div>
-                )}
               </div>
-              <div style={{ height: 40 }} />
-            </>
+              <div style={{ height: '90%' }}>
+                <ResultsView nodes={test?.results || []} summary={test?.gptResponse} />
+              </div>
+            </div>
           ) : (
             <div
               style={{

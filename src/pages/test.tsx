@@ -3,6 +3,7 @@ import { MainWrapper } from '@/components/MainWrapper'
 import { ProgressBar } from '@/components/ProgressBar'
 import { SelectableQuestion } from '@/components/SelectableQuestion'
 import { ResultsUtils } from '@/components/_results/misc'
+import { FinalSubmitLoadingModal } from '@/components/_test/FinalSubmitLoadingModal'
 import { TestPageUtils } from '@/components/_test/misc'
 import { TestPageReducer } from '@/components/_test/reducer'
 import { LoadingOverlayContext } from '@/contexts/LoadingOverlayContext'
@@ -45,6 +46,7 @@ export default function Test({ err, message, res }: Props) {
   const [page, setPage] = useState(0)
   const [writingProgressState, setWritingProgressState] = useState<WritingProgressState>('no_need_to_check')
   const [isLoading, setIsLoading] = useState(false)
+  const [isFinishing, setIsFinishing] = useState(false)
   const { testToken, savedProgress } = useContext(SessionContext)
   const { status } = useContext(SessionContext)
   const { pushPopUpMessage } = useContext(PopUpContext)
@@ -76,11 +78,11 @@ export default function Test({ err, message, res }: Props) {
   }
 
   const onFinish = async () => {
-    setIsLoading(true)
+    setIsFinishing(true)
     const functionScores = ResultsUtils.deriveCompatibleCognitiveScores(questions || [], state.answers)
     const results = ResultsUtils.deriveCompatibilityVectors(functionScores)
     const res = await API.updateTest({ answers: state.answers, id: testToken, status: TestStatus.Finished, functionScores, results })
-    setIsLoading(false)
+    setIsFinishing(false)
     if (res.err) {
       pushPopUpMessage({ message: res.message || Constants.unknownError, title: 'Error finalizing your test', type: 'error' })
     } else {
@@ -126,6 +128,7 @@ export default function Test({ err, message, res }: Props) {
 
   return (
     <>
+      {isFinishing && <FinalSubmitLoadingModal />}
       <Head />
       <MainWrapper>
         <Typography variant="h3" style={{ textAlign: 'center', padding: 20 }}>

@@ -27,7 +27,7 @@ const getResultsExplanation = async (user: User, scores: ScoreNode[], results: M
           content: Constants.explainResultsPromptTemplate(user, scores, results),
         },
       ],
-      temperature: 0.52,
+      temperature: 0.61,
       max_tokens: 1024,
       top_p: 1,
       frequency_penalty: 0.43,

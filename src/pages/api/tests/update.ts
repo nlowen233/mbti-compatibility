@@ -31,7 +31,7 @@ export default withApiAuthRequired(async function handler(req: NextApiRequest, r
     } catch (err) {
       sessionError = err as string
     }
-    const id = session?.idToken
+    const id = session?.user.sub as string | undefined
     if (sessionError) {
       await SQL.query(
         client,
@@ -41,18 +41,12 @@ export default withApiAuthRequired(async function handler(req: NextApiRequest, r
         ),
       )
     } else {
-      let userRes: APIRes<SQLUser[]> | undefined
-      let userError: string | undefined
-      try {
-        userRes = await SQL.query<SQLUser>(client, SQLQueries.getUserByID(id as string))
-      } catch (err) {
-        userError = err as string
-      }
-      if (userError) {
+      let userRes = await SQL.query<SQLUser>(client, SQLQueries.getUserByID(id as string))
+      if (userRes?.err) {
         await SQL.query(
           client,
           SQLQueries.insertError(
-            `Error updating test: Could not get user by id from database. Affected Test ID was ${updatedTest.id}. Error: ${userError}`,
+            `Error updating test: Could not get user by id from database. Affected Test ID was ${updatedTest.id}. User id was ${id}. Error: ${userRes?.message}`,
             ErrorSeverity.Error,
           ),
         )

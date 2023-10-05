@@ -4,10 +4,10 @@ export type SQLTest = {
   id: string
   user_id: string
   status: number
-  created_at: Date
-  function_scores: string
-  results_data: string
-  gpt_response: string
+  created_at: string
+  function_scores: string | null
+  results_data: string | null
+  gpt_response: string | null
 } & SQLTestAnswers
 
 export type SQLTestAnswers = {
