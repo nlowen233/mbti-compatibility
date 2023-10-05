@@ -1,4 +1,5 @@
-import { Scores } from '@/types/SQLTypes'
+import { MBTIScoreData, ScoreNode } from '@/components/_results/misc'
+import { Scores, User } from '@/types/SQLTypes'
 import { MBTI, Option } from '@/types/misc'
 import { MBTIs } from './MBTI'
 
@@ -83,6 +84,13 @@ const SIGMOID_WEIGHT = () => 1
 
 const TRUE = () => 'true'
 
+const explainResultsPromptTemplate = (user: User, scores: ScoreNode[], results: MBTIScoreData[]) =>
+  `Gender: ${user.gender || 'null'}\nAge: ${user.age || 'null'}\nMBTI Type: ${
+    user.mbtiType || 'null'
+  }\nExpected Most Compatible MBTI Type: ${user.expectedMbtiType || 'null'}\nscores:\n${
+    scores ? JSON.stringify(scores) : 'null'
+  }\nresults:\n${results ? JSON.stringify(results) : 'null'}`
+
 export const Constants = {
   MBTIOptions,
   Ages,
@@ -99,5 +107,6 @@ export const Constants = {
   MBTIArray,
   SIGMOID_WEIGHT,
   TRUE,
+  explainResultsPromptTemplate,
   disclaimer: `*By getting verified, you acknowledge that your test outcomes may be anonymously included in survey data. You also consent to your data being used to tailor potential future services offered. Your email address will be securely stored in a private database. You will not get ANY emails from this application or others in its network unless you give explicit permission. It is illegal for this application to sell/trade your data without your explicit permission and there are no plans to do so. Please contact our support email address (in the 'Gear' icon menu) for any further inquiries of any kind. Your privacy is taken very seriously.`,
 }

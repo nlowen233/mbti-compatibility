@@ -7,6 +7,61 @@ import { Constants } from './Constants'
 import { SQLFunctions } from './SQLFunctions'
 import { Utils } from './Utils'
 
+const updateQuestions = async (client: VercelPoolClient, questions: Question[]): Promise<APIRes<SQLQuestion[]>> => {
+  let error
+  const paramsArray = questions.map(Utils.parameterize)
+  let res = null
+  try {
+    res = await client.query(SQLFunctions.updateQuestions(paramsArray))
+  } catch (err) {
+    error = err
+  }
+  if (error) {
+    return {
+      err: true,
+      message: error as string,
+      res: null,
+    }
+  }
+  return {
+    err: false,
+    message: null,
+    res: res?.rows || [],
+  }
+}
+
+const updateTest = async (
+  client: VercelPoolClient,
+  { id, answers, status, functionScores, gptResponse, results }: Partial<Test>,
+): Promise<APIRes<QueryResult<any>>> => {
+  let error
+  const params = []
+  params.push(Utils.parameterize(id))
+  params.push(Utils.parameterize(answers))
+  params.push(Utils.parameterize(status))
+  params.push(Utils.parameterize(functionScores))
+  params.push(Utils.parameterize(results))
+  params.push(Utils.parameterize(gptResponse))
+  let res = null
+  try {
+    res = await client.query(SQLFunctions.updateTest(params))
+  } catch (err) {
+    error = err
+  }
+  if (error) {
+    return {
+      err: true,
+      message: error as string,
+      res: null,
+    }
+  }
+  return {
+    err: false,
+    message: null,
+    res,
+  }
+}
+
 const loginStartTest = async (
   client: VercelPoolClient,
   { age, email, expectedResult, gender, name, nickname, sub, mbtiType, email_verified }: Partial<IndexPageState & UserProfile>,
@@ -15,7 +70,6 @@ const loginStartTest = async (
   const params = []
   params.push(Utils.parameterize(sub))
   params.push(Utils.parameterize(null)) //TODO IP
-  params.push(Utils.parameterize(null)) //Timestamp
   params.push(Utils.parameterize(email))
   params.push(Utils.parameterize(age))
   params.push(Utils.parameterize(gender))
@@ -44,55 +98,6 @@ const loginStartTest = async (
   }
 }
 
-const updateQuestions = async (client: VercelPoolClient, questions: Question[]): Promise<APIRes<SQLQuestion[]>> => {
-  let error
-  const paramsArray = questions.map(Utils.parameterize)
-  let res = null
-  try {
-    res = await client.query(SQLFunctions.updateQuestions(paramsArray))
-  } catch (err) {
-    error = err
-  }
-  if (error) {
-    return {
-      err: true,
-      message: error as string,
-      res: null,
-    }
-  }
-  return {
-    err: false,
-    message: null,
-    res: res?.rows || [],
-  }
-}
-
-const updateTest = async (client: VercelPoolClient, { id, answers, status }: Partial<Test>): Promise<APIRes<QueryResult<any>>> => {
-  let error
-  const params = []
-  params.push(Utils.parameterize(id))
-  params.push(Utils.parameterize(answers))
-  params.push(Utils.parameterize(status))
-  let res = null
-  try {
-    res = await client.query(SQLFunctions.updateTest(params))
-  } catch (err) {
-    error = err
-  }
-  if (error) {
-    return {
-      err: true,
-      message: error as string,
-      res: null,
-    }
-  }
-  return {
-    err: false,
-    message: null,
-    res,
-  }
-}
-
 async function query<Response extends QueryResultRow>(client: VercelPoolClient, query: string): Promise<APIRes<Response[]>> {
   let error: string | undefined
   let res = null
@@ -111,7 +116,7 @@ async function query<Response extends QueryResultRow>(client: VercelPoolClient, 
   return {
     err: false,
     message: null,
-    res: res?.rows || [],
+    res: (res?.rows.map(Utils.serializeSQLRow) as Response[]) || [],
   }
 }
 

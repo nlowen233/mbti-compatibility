@@ -28,7 +28,7 @@ export default function Home() {
   const [isCreatingTest, setIsCreatingTest] = useState(false)
   const [state, dispatch] = useReducer(IndexPageReducer.reducer, IndexPageReducer.INIT_STATE())
   const query = router.query as IndexPageQueryDictionaryFix
-  const buttonDisabled = !state.age || !state.expectedResult || !state.gender || !state.mbtiType
+  const buttonDisabled = !user && (!state.age || !state.expectedResult || !state.gender || !state.mbtiType)
   const buttonText = !!user ? 'Take the Test!' : 'Get Verified'
   const redirectURL = `/api/auth/login?returnTo=?code=${Convert.indexStateToQueryParams(state)}`
 
@@ -39,7 +39,7 @@ export default function Home() {
 
   const onStartTest = async () => {
     setIsCreatingTest(true)
-    const testRes = await API.loginStartTest({ ...state, ...user })
+    const testRes = await API.loginStartTest({ ...state })
     setIsCreatingTest(false)
     if (testRes.err) {
       return pushPopUpMessage({ message: testRes.message || Constants.unknownError, title: 'Could not start test', type: 'error' })
@@ -100,31 +100,33 @@ export default function Home() {
               By an ENTJ
             </Typography>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
-            <Box
-              sx={{
-                display: 'grid',
-                rowGap: 5,
-                columnGap: 5,
-                gridTemplateColumns: '1fr 1fr',
-                width: '80%',
+          {!user && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+              <Box
+                sx={{
+                  display: 'grid',
+                  rowGap: 5,
+                  columnGap: 5,
+                  gridTemplateColumns: '1fr 1fr',
+                  width: '80%',
 
-                '@media (max-width: 870px)': {
-                  gridTemplateColumns: '1fr',
-                },
-              }}
-            >
-              <FormSelect onChange={onChangeAge} value={state.age} label="Age" options={Constants.Ages()} />
-              <FormSelect onChange={onChangeGender} value={state.gender} label="Gender" options={Constants.Genders()} />
-              <FormSelect onChange={onChangeMBTI} value={state.mbtiType} label="Your presumed MBTI" options={Constants.MBTIOptions()} />
-              <FormSelect
-                onChange={onChangeExpected}
-                value={state.expectedResult}
-                label="Your expected most compatible MBTI"
-                options={Constants.MBTIOptions()}
-              />
-            </Box>
-          </div>
+                  '@media (max-width: 870px)': {
+                    gridTemplateColumns: '1fr',
+                  },
+                }}
+              >
+                <FormSelect onChange={onChangeAge} value={state.age} label="Age" options={Constants.Ages()} />
+                <FormSelect onChange={onChangeGender} value={state.gender} label="Gender" options={Constants.Genders()} />
+                <FormSelect onChange={onChangeMBTI} value={state.mbtiType} label="Your presumed MBTI" options={Constants.MBTIOptions()} />
+                <FormSelect
+                  onChange={onChangeExpected}
+                  value={state.expectedResult}
+                  label="Your expected most compatible MBTI"
+                  options={Constants.MBTIOptions()}
+                />
+              </Box>
+            </div>
+          )}
           <div style={{ display: 'flex', alignItems: 'center', marginTop: 20, flexDirection: 'column' }}>
             <Button
               variant="contained"

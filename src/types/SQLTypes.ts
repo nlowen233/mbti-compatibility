@@ -1,8 +1,13 @@
+import { MBTIScoreData, ScoreNode } from '@/components/_results/misc'
+
 export type SQLTest = {
   id: string
   user_id: string
   status: number
-  created_at: Date
+  created_at: string
+  function_scores: string | null
+  results_data: string | null
+  gpt_response: string | null
 } & SQLTestAnswers
 
 export type SQLTestAnswers = {
@@ -18,6 +23,9 @@ export type Test = {
   userId: string
   status: TestStatus
   createdAt: string
+  functionScores: ScoreNode[]
+  results: MBTIScoreData[]
+  gptResponse: string
 } & TestAnswers
 
 export type TestAnswers = {
@@ -64,4 +72,20 @@ export type Scores = {
   Fi: number
   Si: number
   Se: number
+}
+
+export type SQLUser = {
+  id: string
+  age: string | null
+  gender: string | null
+  mbti_type: string | null
+  expected_mbti_type: string | null
+}
+
+export type User = {
+  id: string
+  age: string
+  gender: string
+  mbtiType: string
+  expectedMbtiType: string
 }

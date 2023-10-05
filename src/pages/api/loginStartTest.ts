@@ -4,24 +4,24 @@ import { Convert } from '@/misc/Convert'
 import { SQL } from '@/misc/SQL'
 import { Test } from '@/types/SQLTypes'
 import { APIRes } from '@/types/misc'
-import { UserProfile } from '@auth0/nextjs-auth0/client'
+import { Session, getSession, withApiAuthRequired } from '@auth0/nextjs-auth0'
+import type { UserProfile } from '@auth0/nextjs-auth0/client'
 import { VercelPoolClient, db } from '@vercel/postgres'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<APIRes<Partial<Test>>>) {
-  const user = req.body as Partial<IndexPageState & UserProfile>
-  if (!Constants.Ages().find((node) => node.value === user.age)) {
-    return res.status(400).send({ err: true, message: `Invalid age ${user.age}` })
+export default withApiAuthRequired(async function handler(req: NextApiRequest, res: NextApiResponse<APIRes<Partial<Test>>>) {
+  const user = req.body as Partial<IndexPageState>
+  let session: Session | null | undefined = null
+  let sessionError
+  try {
+    session = await getSession(req, res)
+  } catch (err) {
+    sessionError = err
   }
-  if (!Constants.MBTIOptions().find((node) => node.value === user.mbtiType)) {
-    return res.status(400).send({ err: true, message: `Invalid MBTI ${user.mbtiType}` })
+  if (sessionError) {
+    return res.status(500).send({ err: true, message: `There was an error getting the auth session: ${sessionError}` })
   }
-  if (!Constants.MBTIOptions().find((node) => node.value === user.expectedResult)) {
-    return res.status(400).send({ err: true, message: `Invalid expected MBTI ${user.expectedResult}` })
-  }
-  if (!Constants.Genders().find((node) => node.value === user.gender)) {
-    return res.status(400).send({ err: true, message: `Invalid gender ${user.gender}` })
-  }
+  const auth = session?.user as UserProfile
   let client: undefined | VercelPoolClient
   let error
   try {
@@ -32,9 +32,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   if (error || !client) {
     return res.status(500).send({ err: true, message: (error as string) || Constants.unknownError })
   }
-  const testRes = await SQL.loginStartTest(client, user)
+  const testRes = await SQL.loginStartTest(client, { ...user, ...auth })
   client.release()
   return res
     .status(!!testRes.err ? 500 : 200)
     .send({ err: testRes.err, message: testRes.message, res: Convert.sqlToTest(testRes.res || {}) })
-}
+})

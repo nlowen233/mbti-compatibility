@@ -1,5 +1,6 @@
 import { Primitive } from '@/types/misc'
 import { Claims } from '@auth0/nextjs-auth0'
+import { QueryResultRow } from '@vercel/postgres'
 import { Constants } from './Constants'
 import { Paths } from './Paths'
 import { Roles } from './Roles'
@@ -110,7 +111,6 @@ const shareResults = async (testID: string): Promise<string | false> => {
   try {
     await navigator.share({
       title: 'MBTI Compatibility Test',
-      text: 'Get a ranking of your most compatible MBTI types',
       url: `https://${window.location.host}${Paths.results}/${testID}`,
     })
   } catch (err) {
@@ -121,6 +121,18 @@ const shareResults = async (testID: string): Promise<string | false> => {
   } else {
     return error
   }
+}
+
+const serializeSQLRow = (row: QueryResultRow) => {
+  const newRow = { ...row }
+  const keys = Object.keys(newRow) as (keyof QueryResultRow)[]
+  keys.forEach((key) => {
+    const pivot = newRow[key]
+    if (pivot instanceof Date) {
+      newRow[key] = pivot.toISOString()
+    }
+  })
+  return newRow as QueryResultRow
 }
 
 export const Utils = {
@@ -135,4 +147,5 @@ export const Utils = {
   sigmoidFunction,
   isAdmin,
   shareResults,
+  serializeSQLRow,
 }

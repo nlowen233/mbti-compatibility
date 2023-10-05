@@ -21,7 +21,7 @@ export const ResponseModal = ({ close, text, title, type }: Props) => {
       aria-describedby="alert-dialog-description"
       aria-labelledby="alert-dialog-title"
       onClose={close}
-      open={!!open}
+      open
       PaperProps={{
         style: {
           maxWidth: 800,
