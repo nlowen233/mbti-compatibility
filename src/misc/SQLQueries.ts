@@ -10,4 +10,8 @@ export const SQLQueries = {
   getUserByID: (userID: string) => `SELECT * from users where id=${Utils.parameterize(userID)}`,
   insertError: (message: string, severity: ErrorSeverity) =>
     `INSERT INTO errors (message,severity) VALUES (${Utils.parameterize(message)},${Utils.parameterize(severity)})`,
+  getAllTestsForUserID: (userID: string) =>
+    `WITH QuestionsCount AS (SELECT COUNT(*) AS amountOfQuestions FROM questions) SELECT tests.*, QuestionsCount.amountOfQuestions FROM tests, QuestionsCount WHERE tests.user_id = ${Utils.parameterize(
+      userID,
+    )}`,
 }

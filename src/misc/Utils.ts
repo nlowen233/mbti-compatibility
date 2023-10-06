@@ -1,6 +1,7 @@
 import { Primitive } from '@/types/misc'
 import { Claims } from '@auth0/nextjs-auth0'
 import { QueryResultRow } from '@vercel/postgres'
+import dayjs from 'dayjs'
 import { Constants } from './Constants'
 import { Paths } from './Paths'
 import { Roles } from './Roles'
@@ -103,7 +104,7 @@ const isAdmin = (user?: Claims) => {
     return false
   }
   const roles = user[Constants.rolesNamespace] as string[] | undefined
-  return !roles?.includes(Roles.admin)
+  return roles?.includes(Roles.admin)
 }
 
 const shareResults = async (testID: string): Promise<string | false> => {
@@ -135,6 +136,10 @@ const serializeSQLRow = (row: QueryResultRow) => {
   return newRow as QueryResultRow
 }
 
+const displayDateTime = (date?: string) => (dayjs(date).isValid() ? dayjs(date).format('MM/DD/YYYY h:mmA') : 'Invalid Date')
+
+const toPercentage = (n: number) => (Number.isNaN(n) || n > 1 || n < 0 ? '0%' : `${(n * 100).toFixed(0)}%`)
+
 export const Utils = {
   stringOrNull,
   numberOrNull,
@@ -148,4 +153,6 @@ export const Utils = {
   isAdmin,
   shareResults,
   serializeSQLRow,
+  displayDateTime,
+  toPercentage,
 }

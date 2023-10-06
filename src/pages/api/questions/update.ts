@@ -18,7 +18,7 @@ export default withApiAuthRequired(async function handler(req: NextApiRequest, r
   if (error) {
     return res.status(401).send({ err: true, message: 'Could not get session data (auth0)' })
   }
-  if (Utils.isAdmin(session?.user)) {
+  if (!Utils.isAdmin(session?.user)) {
     return res.status(500).send({ err: true, message: `You don't have permission to change update this resource` })
   }
   let client: VercelPoolClient | undefined

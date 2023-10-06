@@ -8,6 +8,7 @@ import { PopUpContext } from '@/contexts/PopUpContext'
 import { API } from '@/misc/API'
 import { Constants } from '@/misc/Constants'
 import { Convert } from '@/misc/Convert'
+import { Paths } from '@/misc/Paths'
 import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
 import { Styles } from '@/misc/Styles'
@@ -16,7 +17,6 @@ import { ZIndex } from '@/misc/ZIndex'
 import { Question, SQLQuestion, Scores } from '@/types/SQLTypes'
 import { APIRes } from '@/types/misc'
 import { getSession } from '@auth0/nextjs-auth0'
-import { UserContext } from '@auth0/nextjs-auth0/client'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import { Box, Button, IconButton, Input, Typography, useTheme } from '@mui/material'
@@ -24,8 +24,7 @@ import { db } from '@vercel/postgres'
 import _ from 'lodash'
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { useContext, useEffect, useReducer, useState } from 'react'
+import { useContext, useReducer, useState } from 'react'
 
 type Props = APIRes<SQLQuestion[]>
 
@@ -33,10 +32,10 @@ const grid = Styles.functionGrid()
 
 export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res }) => {
   const session = await getSession(req, res)
-  if (Utils.isAdmin(session?.user)) {
+  if (!Utils.isAdmin(session?.user)) {
     return {
       redirect: {
-        destination: '/404',
+        destination: Paths.notFound,
         permanent: false,
       },
     }
@@ -50,8 +49,6 @@ export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res }) =
 }
 
 export default function Admin({ err, message, res }: Props) {
-  const router = useRouter()
-  const { user, isLoading } = useContext(UserContext)
   const { palette } = useTheme()
   const [pageSize, setPageSize] = useState(8)
   const [page, setPage] = useState(0)
@@ -114,12 +111,6 @@ export default function Admin({ err, message, res }: Props) {
       dispatch({ type: 'setQuestions', fromServer: true, questions: (res.res || []) as Question[] })
     }
   }
-
-  useEffect(() => {
-    if (!user && !isLoading) {
-      router.push('/api/auth/login?returnTo=/admin')
-    }
-  }, [user, isLoading])
 
   return (
     <>
@@ -207,16 +198,6 @@ export default function Admin({ err, message, res }: Props) {
               <Button variant="contained" style={{ marginLeft: 10 }} disabled={submitDisabled} onClick={onSaveChanges}>
                 Save Changes
               </Button>
-              {!AdminUtils.allScoresAreEqual(functionTotals) && (
-                <Typography
-                  fontStyle={'italic'}
-                  variant="subtitle1"
-                  paddingLeft={1}
-                  sx={{ '@media (max-width: 800px)': { display: 'none' } }}
-                >
-                  *All function totals must be equal
-                </Typography>
-              )}
             </div>
           </div>
         </div>

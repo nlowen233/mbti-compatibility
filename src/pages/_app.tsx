@@ -43,18 +43,18 @@ export default function App({ Component, pageProps }: AppProps) {
     title: 'Start Test',
   }
 
+  const allTests: MenuOption = {
+    onClick: () => {
+      router.push(`${Paths.tests}/all`)
+    },
+    title: 'My Tests',
+  }
+
   const supportEmail: MenuOption = {
     onClick: () => {
       window.location.href = `mailto:${Constants.supportEmail}`
     },
     title: 'Contact Support',
-  }
-
-  const github: MenuOption = {
-    onClick: () => {
-      window.open(`https://github.com/nlowen233`, '_blank')
-    },
-    title: 'Open my Github',
   }
 
   useEffect(() => {
@@ -63,7 +63,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [])
 
   useEffect(() => {
-    if (router.pathname.includes(Paths.admin) || router.pathname.includes(Paths.results)) {
+    if (router.pathname.includes(Paths.admin) || router.pathname.includes(Paths.results) || router.pathname.includes(Paths.tests)) {
       return
     }
     if (status === 'not_checked_token') {
@@ -103,7 +103,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <UserProvider>
         <SessionContext.Provider value={{ setTestToken, testToken, savedProgress, status, setSavedProgress }}>
           <LoadingOverlayWrapper on={loadingOverlay} toggle={setLoadingOverlay}>
-            <MenuWrapper options={[logOutOption, startTestOption, supportEmail, github]}>
+            <MenuWrapper options={[logOutOption, startTestOption, allTests, supportEmail]}>
               <PopUpWrapper clearMessage={() => setMessage(undefined)} pushPopUpMessage={(msg) => setMessage(msg)} popUpMessage={message}>
                 <Component {...pageProps} />
               </PopUpWrapper>

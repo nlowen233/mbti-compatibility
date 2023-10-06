@@ -108,6 +108,6 @@ export const Constants = {
   SIGMOID_WEIGHT,
   TRUE,
   explainResultsPromptTemplate,
-  disclaimer: `*By getting verified, you acknowledge that your test outcomes may be anonymously included in survey data. You also consent to your data being used to tailor potential future services offered. Your email address will be securely stored in a private database. You will not get ANY emails from this application or others in its network unless you give explicit permission. It is illegal for this application to sell/trade your data without your explicit permission and there are no plans to do so. Please contact our support email address (in the 'Gear' icon menu) for any further inquiries of any kind. Your privacy is taken very seriously.`,
+  disclaimer: `*By getting verified, you acknowledge that your test outcomes may be anonymously included in survey data. You also consent to your data being used to tailor potential future services offered. Your information will be securely stored in a private database. You will not get ANY emails from this application or others in its network unless you give explicit permission.`,
   isMaintenance: process.env.NEXT_PUBLIC_MAINTENANCE === TRUE(),
 }

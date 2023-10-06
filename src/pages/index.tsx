@@ -95,14 +95,23 @@ export default function Home() {
             overflowX: 'auto',
           }}
         >
-          <div style={{ paddingLeft: 20, paddingRight: 20 }}>
+          <Box
+            sx={{
+              paddingLeft: 5,
+              paddingRight: 5,
+              '@media (max-width: 450px)': {
+                paddingLeft: 1,
+                paddingRight: 1,
+              },
+            }}
+          >
             <Typography variant="h1" textAlign={'center'}>
               MBTI Compatibility Test
             </Typography>
             <Typography variant="h4" textAlign={'center'}>
               By an ENTJ
             </Typography>
-          </div>
+          </Box>
           {!user && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
               <Box

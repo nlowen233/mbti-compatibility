@@ -1,8 +1,9 @@
 import { MenuOption } from '@/types/misc'
+import { UserContext } from '@auth0/nextjs-auth0/client'
 import SettingsIcon from '@mui/icons-material/Settings'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-import React from 'react'
+import React, { useContext } from 'react'
 
 type Props = {
   children: React.ReactNode
@@ -11,6 +12,7 @@ type Props = {
 
 export const MenuWrapper = ({ children, options }: Props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | SVGElement>(null)
+  const { user } = useContext(UserContext)
   const open = Boolean(anchorEl)
   const handleClose = () => setAnchorEl(null)
   const handleClickListItem = (event: React.MouseEvent<SVGElement, MouseEvent>) => {
@@ -22,17 +24,19 @@ export const MenuWrapper = ({ children, options }: Props) => {
   }
   return (
     <>
-      <SettingsIcon
-        style={{
-          position: 'fixed',
-          right: 0,
-          top: 0,
-          padding: 20,
-          cursor: 'pointer',
-        }}
-        fontSize="medium"
-        onClick={handleClickListItem}
-      />
+      {!!user && (
+        <SettingsIcon
+          style={{
+            position: 'fixed',
+            right: 0,
+            top: 0,
+            padding: 20,
+            cursor: 'pointer',
+          }}
+          fontSize="medium"
+          onClick={handleClickListItem}
+        />
+      )}
       <Menu
         id="lock-menu"
         anchorEl={anchorEl}

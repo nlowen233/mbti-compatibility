@@ -3,4 +3,6 @@ export const enum Paths {
   admin = '/admin',
   test = '/test',
   results = '/results',
+  tests = '/tests',
+  notFound = '/404',
 }
