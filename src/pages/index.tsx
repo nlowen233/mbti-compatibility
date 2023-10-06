@@ -80,7 +80,10 @@ export default function Home() {
 
   return (
     <>
-      <Head />
+      <Head
+        title="MBTI Compatibility Test"
+        description="Start your MBTI Compatibility Test, find which MBTI types are compatible with you"
+      />
       <MainWrapper>
         <div
           style={{

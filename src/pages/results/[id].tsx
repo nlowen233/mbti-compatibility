@@ -78,7 +78,10 @@ export default function Results(props: Partial<Props>) {
 
   return (
     <>
-      <Head />
+      <Head
+        title={`${test?.nickName}'s Compatibility Results`}
+        description={`Check out the rankings and summary of ${test?.nickName}'s MBTI compatibility results`}
+      />
       <MainWrapper>
         <LoadingOverlay loading={isFallback} />
         <Typography variant="h3" style={{ textAlign: 'center', paddingLeft: 20, paddingRight: 20, paddingTop: 30 }}>
