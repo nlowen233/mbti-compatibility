@@ -51,7 +51,7 @@ const parsedJSONOrUndefined = (s?: string | null) => {
   }
 }
 
-const singleQuoteEscape = (s: string) => s.replace(/'/g, '')
+const singleQuoteEscape = (s: string) => s.replace(/'/g, "''")
 const singleQuoteUnescape = (s: string) => s.replace(/''/g, "'")
 const fromSQLString = (s: string | null) => (s === null ? undefined : singleQuoteUnescape(s))
 
