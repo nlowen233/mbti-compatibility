@@ -99,6 +99,9 @@ export default function Home() {
             sx={{
               paddingLeft: 5,
               paddingRight: 5,
+              '@media (max-width: 800px)': {
+                paddingTop: 5,
+              },
               '@media (max-width: 450px)': {
                 paddingLeft: 1,
                 paddingRight: 1,
