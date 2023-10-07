@@ -8,6 +8,10 @@ import { QueryResult, VercelPoolClient, db } from '@vercel/postgres'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { APIRes, ErrorSeverity } from '../../../types/misc'
 
+export const config = {
+  maxDuration: 100,
+}
+
 export default withApiAuthRequired(async function handler(req: NextApiRequest, res: NextApiResponse<APIRes<QueryResult<any>>>) {
   const updatedTest = req.body as Partial<Test>
   if (updatedTest.answers?.some((a) => !a.id)) {
