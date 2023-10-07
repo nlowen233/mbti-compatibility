@@ -20,7 +20,7 @@ export const Mobile = ({ test, amountOfQuestions }: TestNodeProps) => {
     return score
   }
   const score = getCompletionScore()
-  const topResults = test?.results?.slice(0, 3)
+  const topResults = [...(test?.results || [])].sort((a, b) => b.compatibilityScore - a.compatibilityScore).slice(0, 3)
   const buttonText = TestsPageUtils.testStatusToButtonText(test?.status || 0)
   const progressScore = score * 100
   return (
