@@ -9,7 +9,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { APIRes, ErrorSeverity } from '../../../types/misc'
 
 export const config = {
-  maxDuration: 100,
+  maxDuration: 300,
 }
 
 export default withApiAuthRequired(async function handler(req: NextApiRequest, res: NextApiResponse<APIRes<QueryResult<any>>>) {
