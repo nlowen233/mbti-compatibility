@@ -32,7 +32,7 @@ Se - auxiliary
 Ni - tertiary
 Te - inferior
 
-So if our test-taker had a 80% in vector[0] and the key was ISFP, the test-taker would have a 80% preference for Fi being the dominant function of a potential partner (JUST AN EXAMPLE, NOT USER DATA).
+So if our test-taker had a 80% in vector[0] and the key was ISFP, the test-taker would have a 80% preference for Fi being the dominant function of a potential partner.
 
 Finally, the "compatibilityScore" field is a weighted average of the values in the vector. Where [0] is counted 8 times, [1] 4 times, [2] 2 times, and [3] 1 time. This is to bias the final compatibility in favor of functions most used by the given type (ISFP in the example case). This score acts as the final ranking for the type-in-question. Therefore, which ever of these types in the results array has the highest "compatibilityScore" score value, is, in your opinion, the best match for the test-taker.
 
