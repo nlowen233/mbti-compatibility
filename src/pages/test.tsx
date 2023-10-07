@@ -158,9 +158,11 @@ export default function Test({ err, message, res }: Props) {
             transition: '250ms',
           }}
           sx={{
-            opacity: 0.8,
-            ':hover': {
-              opacity: 1,
+            '@media (min-width: 1100px)': {
+              opacity: 0.8,
+              ':hover': {
+                opacity: 1,
+              },
             },
           }}
         >

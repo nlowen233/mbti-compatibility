@@ -29,7 +29,9 @@ export const MobileResultsView = ({ nodes, summary }: ResultsViewProps) => {
             </div>
           </div>
         )}
-        {page === 1 && <Summary summary={summary} containerStyle={{ height: '90%', overflowY: 'auto', maxWidth: 800 }} />}
+        {page === 1 && (
+          <Summary summary={summary} containerStyle={{ height: '90%', overflowY: 'auto', maxWidth: 800, paddingBottom: 80 }} />
+        )}
       </div>
       <Box
         style={{
@@ -41,9 +43,11 @@ export const MobileResultsView = ({ nodes, summary }: ResultsViewProps) => {
           transition: '250ms',
         }}
         sx={{
-          opacity: 0.8,
-          ':hover': {
-            opacity: 1,
+          '@media (min-width: 1100px)': {
+            opacity: 0.8,
+            ':hover': {
+              opacity: 1,
+            },
           },
         }}
       >

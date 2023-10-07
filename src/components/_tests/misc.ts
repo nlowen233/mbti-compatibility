@@ -2,8 +2,8 @@ import { Convert } from '@/misc/Convert'
 import { Test, TestStatus } from '@/types/SQLTypes'
 import { SQLTestWithQuestions } from './types'
 
-const convertSqlTestAndQuestionNum = (tests: SQLTestWithQuestions[]): [Partial<Test>[], number] => {
-  const amountQuestions = Number(tests[0].amountofquestions)
+const convertSqlTestAndQuestionNum = (tests: Partial<SQLTestWithQuestions>[]): [Partial<Test>[], number] => {
+  const amountQuestions = Number(tests[0]?.amountofquestions)
   const amountQuestionsSafe = Number.isNaN(amountQuestions) ? 0 : amountQuestions
   return [tests.map(Convert.sqlToTest), amountQuestionsSafe]
 }

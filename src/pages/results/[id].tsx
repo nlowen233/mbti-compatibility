@@ -87,18 +87,14 @@ export default function Results(props: Partial<Props>) {
         </Typography>
         {!isFallback &&
           (!!answers.length ? (
-            <div style={{ height: '90vh', minHeight: 600, overflowY: 'hidden' }}>
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
-                  <Button variant="contained" style={{ marginTop: 20 }} onClick={onButtonClick}>
-                    {buttonText}
-                  </Button>
-                </div>
+            <>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 10 }}>
+                <Button variant="contained" style={{ marginTop: 20 }} onClick={onButtonClick}>
+                  {buttonText}
+                </Button>
               </div>
-              <div style={{ height: '90%' }}>
-                <ResultsView nodes={test?.results || []} summary={test?.gptResponse} />
-              </div>
-            </div>
+              <ResultsView nodes={test?.results || []} summary={test?.gptResponse} />
+            </>
           ) : (
             <div
               style={{

@@ -5,12 +5,16 @@ import { ResultsViewProps } from './types'
 
 export const DesktopResultsView = ({ nodes, summary }: ResultsViewProps) => {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', paddingTop: 20, paddingBottom: 20, height: '95%' }}>
+    <div style={{ display: 'flex', paddingTop: 20, paddingBottom: 20, position: 'relative' }}>
       <Box
         sx={{
-          height: '100%',
+          height: '80vh',
           minWidth: 500,
           overflowY: 'auto',
+          minHeight: 600,
+          position: 'sticky',
+          top: 100,
+          left: 0,
         }}
         style={{ marginRight: 10 }}
       >
