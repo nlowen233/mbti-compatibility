@@ -17,8 +17,6 @@ import { GetStaticPaths, GetStaticProps } from 'next'
 import { useRouter } from 'next/router'
 import { useContext } from 'react'
 
-const DEFAULT_RESULT_CONTAINER_HEIGHT = 400
-
 type Props = APIRes<Partial<SQLTestAndNickname> | null>
 
 export const getStaticPaths: GetStaticPaths = async () => {
