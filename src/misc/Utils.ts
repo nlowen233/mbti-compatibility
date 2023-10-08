@@ -2,6 +2,7 @@ import { Primitive } from '@/types/misc'
 import { Claims } from '@auth0/nextjs-auth0'
 import { QueryResultRow } from '@vercel/postgres'
 import dayjs from 'dayjs'
+import Dinero from 'dinero.js'
 import { Constants } from './Constants'
 import { Paths } from './Paths'
 import { Roles } from './Roles'
@@ -140,6 +141,8 @@ const displayDateTime = (date?: string) => (dayjs(date).isValid() ? dayjs(date).
 
 const toPercentage = (n: number) => (Number.isNaN(n) || n > 1 || n < 0 ? '0%' : `${(n * 100).toFixed(0)}%`)
 
+const toDineroFormat = (n?: number | null) => Dinero({ amount: n || 0, currency: 'USD', precision: 2 }).toFormat()
+
 export const Utils = {
   stringOrNull,
   numberOrNull,
@@ -155,4 +158,5 @@ export const Utils = {
   serializeSQLRow,
   displayDateTime,
   toPercentage,
+  toDineroFormat,
 }

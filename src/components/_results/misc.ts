@@ -96,8 +96,24 @@ const arrayIndexToFunctionName = (i: number): keyof MBTI => {
   }
 }
 
+const CATEGORY_TITLES = () => [
+  'About Your Top Match',
+  'Your Dream Dominant Function',
+  'Where Can I Meet them?',
+  'Is this What you Expected?',
+  'Conclusion',
+]
+
+const sectionTitleStyles = (): React.CSSProperties => ({
+  paddingLeft: 20,
+  paddingTop: 10,
+  paddingBottom: 10,
+})
+
 export const ResultsUtils = {
   deriveCompatibleCognitiveScores,
   deriveCompatibilityVectors,
   arrayIndexToFunctionName,
+  CATEGORY_TITLES,
+  sectionTitleStyles,
 }

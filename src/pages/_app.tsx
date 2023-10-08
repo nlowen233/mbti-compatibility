@@ -63,7 +63,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }, [])
 
   useEffect(() => {
-    if (router.pathname.includes(Paths.admin) || router.pathname.includes(Paths.results) || router.pathname.includes(Paths.tests)) {
+    if (router.pathname !== Paths.home && router.pathname !== Paths.test) {
       return
     }
     if (status === 'not_checked_token') {

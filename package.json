@@ -14,12 +14,15 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.9",
     "@mui/material": "^5.14.10",
+    "@stripe/react-stripe-js": "^2.3.1",
+    "@stripe/stripe-js": "^2.1.7",
     "@types/node": "20.6.3",
     "@types/react": "18.2.22",
     "@types/react-dom": "18.2.7",
     "@vercel/postgres": "^0.5.0",
     "axios": "^1.5.0",
     "dayjs": "^1.11.10",
+    "dinero.js": "^1.9.1",
     "eslint": "8.50.0",
     "eslint-config-next": "13.5.2",
     "interweave": "^13.1.0",
@@ -29,11 +32,14 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-scroll": "^1.8.9",
+    "stripe": "^13.9.0",
     "typescript": "5.2.2"
   },
   "devDependencies": {
+    "@types/dinero.js": "^1.9.1",
     "@types/lodash": "^4.14.199",
     "@types/react-scroll": "^1.8.7",
+    "@types/stripe": "^8.0.417",
     "prettier": "^3.0.3"
   }
 }

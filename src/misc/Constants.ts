@@ -110,4 +110,6 @@ export const Constants = {
   explainResultsPromptTemplate,
   disclaimer: `*By getting verified, you acknowledge that your test outcomes may be anonymously included in survey data. You also consent to your data being used to tailor potential future services offered. Your information will be securely stored in a private database. You will not get ANY emails from this application or others in its network unless you give explicit permission.`,
   isMaintenance: process.env.NEXT_PUBLIC_MAINTENANCE === TRUE(),
+  enhancePrice: !Number.isNaN(Number(process.env.NEXT_PUBLIC_ENHANCE_PRICE)) ? Number(process.env.NEXT_PUBLIC_ENHANCE_PRICE) : null,
+  stripePublishableKey: process.env.NEXT_PUBLIC_PUBLISHABLE_KEY,
 }

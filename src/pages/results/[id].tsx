@@ -21,7 +21,7 @@ type Props = APIRes<Partial<SQLTestAndNickname> | null>
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const client = await db.connect()
-  const res = await SQL.query<Partial<SQLTest>>(client, SQLQueries.getAllTestIDs)
+  const res = await SQL.query<Partial<SQLTest>>(client, SQLQueries.getAllCompletedTestIDs)
   const paths = res.res?.map((node) => ({ params: { id: node.id || '' } })) || []
   client.release()
   return {
@@ -51,6 +51,7 @@ export default function Results(props: Partial<Props>) {
   const { pushPopUpMessage } = useContext(PopUpContext)
   const test = props.res ? Convert.sqlToTestAndNickname(props.res) : undefined
   const answers = test?.answers || []
+  const isMyTest = test?.userId === user?.sub
 
   const getHeader = () => {
     if (isFallback) {
@@ -72,7 +73,8 @@ export default function Results(props: Partial<Props>) {
     Utils.shareResults(test.id)
   }
 
-  const buttonText = test?.userId === user?.sub ? 'Share your results' : 'Take the test!'
+  const buttonText = isMyTest ? 'Share your results' : 'Take the test!'
+  const ctaHref = isMyTest ? `${Paths.results}/upgrade/${test?.id}` : undefined
 
   return (
     <>
@@ -93,7 +95,7 @@ export default function Results(props: Partial<Props>) {
                   {buttonText}
                 </Button>
               </div>
-              <ResultsView nodes={test?.results || []} summary={test?.gptResponse} />
+              <ResultsView ctaHref={ctaHref} ctaText="Get Full Results" test={test} />
             </>
           ) : (
             <div

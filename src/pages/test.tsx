@@ -131,7 +131,7 @@ export default function Test({ err, message, res }: Props) {
       {isFinishing && <FinalSubmitLoadingModal />}
       <Head />
       <MainWrapper>
-        <Typography variant="h3" style={{ textAlign: 'center', padding: 20 }}>
+        <Typography variant="h3" style={{ textAlign: 'center', padding: 20, paddingTop: 50 }}>
           MBTI Compatibility Test
         </Typography>
         {currentQuestions?.map((q, i) => (

@@ -1,4 +1,4 @@
-import { MBTIScoreData } from './misc'
+import { Test } from '@/types/SQLTypes'
 
 export const enum ResultsPageQueries {
   testId = 'testId',
@@ -12,7 +12,8 @@ export type ResultsPageQueryDictionary = {
 export type ResultsFromStateStatus = 'not_checked' | 'got_answers_from_state' | 'failed_to_get_answers'
 
 export type ResultsViewProps = {
-  nodes: MBTIScoreData[]
-  summary?: string
   style?: React.CSSProperties
+  ctaText?: string
+  ctaHref?: string
+  test?: Partial<Test>
 }

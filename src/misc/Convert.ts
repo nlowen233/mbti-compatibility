@@ -40,6 +40,12 @@ const sqlToTest = ({
   function_scores,
   gpt_response,
   results_data,
+  is_upgraded,
+  upgraded_response1,
+  upgraded_response2,
+  upgraded_response3,
+  upgraded_response4,
+  upgraded_response5,
 }: Partial<SQLTest>): Partial<Test> => ({
   answers: Utils.parsedJSONOrUndefined(answers),
   createdAt: created_at,
@@ -49,28 +55,17 @@ const sqlToTest = ({
   functionScores: Utils.parsedJSONOrUndefined(function_scores),
   gptResponse: Utils.fromSQLString(gpt_response || null),
   results: Utils.parsedJSONOrUndefined(results_data),
+  isUpgraded: is_upgraded || 0,
+  upgradedResponse1: Utils.fromSQLString(upgraded_response1 || null),
+  upgradedResponse2: Utils.fromSQLString(upgraded_response2 || null),
+  upgradedResponse3: Utils.fromSQLString(upgraded_response3 || null),
+  upgradedResponse4: Utils.fromSQLString(upgraded_response4 || null),
+  upgradedResponse5: Utils.fromSQLString(upgraded_response5 || null),
 })
 
-const sqlToTestAndNickname = ({
-  answers,
-  created_at,
-  id,
-  status,
-  user_id,
-  nick_name,
-  function_scores,
-  gpt_response,
-  results_data,
-}: Partial<SQLTestAndNickname>): Partial<TestAndNickname> => ({
-  answers: Utils.parsedJSONOrUndefined(answers),
-  createdAt: created_at,
-  id: Utils.fromSQLString(id || null),
-  status,
-  userId: Utils.fromSQLString(user_id || null),
-  nickName: Utils.fromSQLString(nick_name || null),
-  functionScores: Utils.parsedJSONOrUndefined(function_scores),
-  gptResponse: Utils.fromSQLString(gpt_response || null),
-  results: Utils.parsedJSONOrUndefined(results_data),
+const sqlToTestAndNickname = (params: Partial<SQLTestAndNickname>): Partial<TestAndNickname> => ({
+  ...sqlToTest(params),
+  nickName: Utils.fromSQLString(params.nick_name || null),
 })
 
 const sqlToTestAnswers = ({ answers }: SQLTestAnswers): Partial<TestAnswers> => ({

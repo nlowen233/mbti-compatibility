@@ -1,6 +1,6 @@
 import { Paths } from '@/misc/Paths'
 import { Utils } from '@/misc/Utils'
-import { TestStatus } from '@/types/SQLTypes'
+import { TestStatus, TestUpgradeStatus } from '@/types/SQLTypes'
 import CheckIcon from '@mui/icons-material/Check'
 import { Box, Button, CircularProgress, Typography, useTheme } from '@mui/material'
 import { TestsPageUtils } from '../misc'
@@ -9,6 +9,7 @@ import { TestNodeProps } from '../types'
 export const Desktop = ({ test, amountOfQuestions }: TestNodeProps) => {
   const { palette } = useTheme()
   const testFinished = test?.status === TestStatus.Finished
+  const isUpgraded = test?.isUpgraded === TestUpgradeStatus.upgraded
   const getCompletionScore = () => {
     if (testFinished) {
       return 1
@@ -56,7 +57,7 @@ export const Desktop = ({ test, amountOfQuestions }: TestNodeProps) => {
         ))}
       </div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-        {test?.status === TestStatus.Finished ? (
+        {testFinished ? (
           <>
             <Typography paddingRight={3} variant={'h4'}>
               Completed
@@ -92,6 +93,11 @@ export const Desktop = ({ test, amountOfQuestions }: TestNodeProps) => {
         <Button variant="contained" href={testFinished ? `${Paths.results}/${test.id}` : Paths.test} fullWidth>
           {buttonText}
         </Button>
+        {testFinished && !isUpgraded && (
+          <Button variant="outlined" href={`${Paths.results}/upgrade/${test.id}`} fullWidth style={{ marginTop: 20 }}>
+            Get Full Analysis
+          </Button>
+        )}
       </div>
     </Box>
   )

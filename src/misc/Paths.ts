@@ -5,4 +5,5 @@ export const enum Paths {
   results = '/results',
   tests = '/tests',
   notFound = '/404',
+  upgradeComplete = '/upgrade-complete',
 }

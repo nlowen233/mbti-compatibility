@@ -23,13 +23,22 @@ export const ResponseModal = ({ close, text, title, type }: Props) => {
       onClose={close}
       open
       PaperProps={{
-        style: {
+        sx: {
           maxWidth: 800,
-          borderRadius: 0,
+          borderRadius: 3,
+          '@media (max-width: 870px)': {
+            maxWidth: 600,
+          },
+          '@media (max-width: 650px)': {
+            maxWidth: 400,
+          },
+          '@media (max-width: 420px)': {
+            maxWidth: 250,
+          },
         },
       }}
     >
-      <div style={{ padding: 10 }}>
+      <div style={{ padding: '30px 10px' }}>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <IconButton onClick={close}>
             <CloseIcon style={{ width: 30, height: 30 }} />
@@ -37,9 +46,13 @@ export const ResponseModal = ({ close, text, title, type }: Props) => {
         </div>
         <Box
           sx={{
-            padding: '30px 150px',
-            '@media (max-width: 870px)': {
-              padding: '5px 20px',
+            width: 750,
+            '@media (max-width: 870px)': { width: 500 },
+            '@media (max-width: 650px)': {
+              width: 350,
+            },
+            '@media (max-width: 420px)': {
+              width: 200,
             },
           }}
         >

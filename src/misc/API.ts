@@ -61,10 +61,12 @@ const getTestAnswers = ({ id }: Partial<Test>) =>
 const updateQuestions = (req: Question[]) =>
   createAPIFunction<Partial<Question>[]>({ route: '/api/questions/update', body: req, method: 'POST' })
 const updateTest = (req: Partial<Test>) => createAPIFunction({ route: '/api/tests/update', body: req, method: 'POST' })
+const createPaymentIntent = () => createAPIFunction<string>({ route: '/api/payment/create-payment-intent' })
 
 export const API = {
   loginStartTest,
   getTestAnswers,
   updateQuestions,
   updateTest,
+  createPaymentIntent,
 }

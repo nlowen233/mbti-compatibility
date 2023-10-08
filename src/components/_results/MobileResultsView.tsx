@@ -1,26 +1,31 @@
+import { TestUpgradeStatus } from '@/types/SQLTypes'
 import { Box, Button, Typography } from '@mui/material'
 import { useState } from 'react'
+import { Element } from 'react-scroll'
 import { ScoreNode } from '../ScoreNode'
 import { Summary } from './Summary'
+import { ResultsUtils } from './misc'
 import { ResultsViewProps } from './types'
 
-export const MobileResultsView = ({ nodes, summary }: ResultsViewProps) => {
+const CATEGORY_TITLES = ResultsUtils.CATEGORY_TITLES()
+const sectionTitleStyles = ResultsUtils.sectionTitleStyles()
+
+export const MobileResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps) => {
+  const isUpgraded = test?.isUpgraded === TestUpgradeStatus.upgraded
   const [page, setPage] = useState<0 | 1>(0)
   return (
     <>
-      <div style={{ paddingTop: 20, display: 'flex', justifyContent: 'center', height: '100%' }}>
+      <div style={{ paddingTop: 20, display: 'flex', justifyContent: 'center' }}>
         {page === 0 && (
           <div
             style={{
               display: 'flex',
               justifyContent: 'center',
               width: '100%',
-              overflowY: 'auto',
-              height: '90%',
             }}
           >
             <div>
-              {[...nodes]
+              {[...(test?.results || [])]
                 .sort((a, b) => b.compatibilityScore - a.compatibilityScore)
                 .map((match, i) => (
                   <ScoreNode match={match} key={match.key} index={i} />
@@ -29,9 +34,48 @@ export const MobileResultsView = ({ nodes, summary }: ResultsViewProps) => {
             </div>
           </div>
         )}
-        {page === 1 && (
-          <Summary summary={summary} containerStyle={{ height: '90%', overflowY: 'auto', maxWidth: 800, paddingBottom: 80 }} />
-        )}
+        {page === 1 &&
+          (isUpgraded ? (
+            <div style={{ maxWidth: 800 }}>
+              <Element name={CATEGORY_TITLES[0]}>
+                <Typography style={sectionTitleStyles} variant="h4">
+                  {CATEGORY_TITLES[0]}
+                </Typography>
+              </Element>
+              <Summary summary={test.upgradedResponse1} />
+              <Element name={CATEGORY_TITLES[1]}>
+                <Typography style={sectionTitleStyles} variant="h4">
+                  {CATEGORY_TITLES[1]}
+                </Typography>
+              </Element>
+              <Summary summary={test.upgradedResponse2} />
+              <Element name={CATEGORY_TITLES[2]}>
+                <Typography style={sectionTitleStyles} variant="h4">
+                  {CATEGORY_TITLES[2]}
+                </Typography>
+              </Element>
+              <Summary summary={test.upgradedResponse3} />
+              <Element name={CATEGORY_TITLES[3]}>
+                <Typography style={sectionTitleStyles} variant="h4">
+                  {CATEGORY_TITLES[3]}
+                </Typography>
+              </Element>
+              <Summary summary={test.upgradedResponse4} />
+              <Element name={CATEGORY_TITLES[4]}>
+                <Typography style={sectionTitleStyles} variant="h4">
+                  {CATEGORY_TITLES[4]}
+                </Typography>
+              </Element>
+              <Summary summary={test.upgradedResponse5} containerStyle={{ paddingBottom: 100 }} />
+            </div>
+          ) : (
+            <Summary
+              summary={test?.gptResponse}
+              containerStyle={{ maxWidth: 800, paddingBottom: 100 }}
+              ctaHref={ctaHref}
+              ctaText={ctaText}
+            />
+          ))}
       </div>
       <Box
         style={{
