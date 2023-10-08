@@ -1,7 +1,7 @@
 import { TestUpgradeStatus } from '@/types/SQLTypes'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Link as MUILink, Typography, useTheme } from '@mui/material'
 import { useState } from 'react'
-import { Element } from 'react-scroll'
+import { Element, Link } from 'react-scroll'
 import { ScoreNode } from '../ScoreNode'
 import { Summary } from './Summary'
 import { ResultsUtils } from './misc'
@@ -11,8 +11,9 @@ const CATEGORY_TITLES = ResultsUtils.CATEGORY_TITLES()
 const sectionTitleStyles = ResultsUtils.sectionTitleStyles()
 
 export const MobileResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps) => {
+  const { palette } = useTheme()
   const isUpgraded = test?.isUpgraded === TestUpgradeStatus.upgraded
-  const [page, setPage] = useState<0 | 1>(0)
+  const [page, setPage] = useState<0 | 1>(1)
   return (
     <>
       <div style={{ paddingTop: 20, display: 'flex', justifyContent: 'center' }}>
@@ -36,38 +37,71 @@ export const MobileResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps) 
         )}
         {page === 1 &&
           (isUpgraded ? (
-            <div style={{ maxWidth: 800 }}>
-              <Element name={CATEGORY_TITLES[0]}>
-                <Typography style={sectionTitleStyles} variant="h4">
-                  {CATEGORY_TITLES[0]}
-                </Typography>
-              </Element>
-              <Summary summary={test.upgradedResponse1} />
-              <Element name={CATEGORY_TITLES[1]}>
-                <Typography style={sectionTitleStyles} variant="h4">
-                  {CATEGORY_TITLES[1]}
-                </Typography>
-              </Element>
-              <Summary summary={test.upgradedResponse2} />
-              <Element name={CATEGORY_TITLES[2]}>
-                <Typography style={sectionTitleStyles} variant="h4">
-                  {CATEGORY_TITLES[2]}
-                </Typography>
-              </Element>
-              <Summary summary={test.upgradedResponse3} />
-              <Element name={CATEGORY_TITLES[3]}>
-                <Typography style={sectionTitleStyles} variant="h4">
-                  {CATEGORY_TITLES[3]}
-                </Typography>
-              </Element>
-              <Summary summary={test.upgradedResponse4} />
-              <Element name={CATEGORY_TITLES[4]}>
-                <Typography style={sectionTitleStyles} variant="h4">
-                  {CATEGORY_TITLES[4]}
-                </Typography>
-              </Element>
-              <Summary summary={test.upgradedResponse5} containerStyle={{ paddingBottom: 100 }} />
-            </div>
+            <>
+              <div style={{ maxWidth: 800 }}>
+                <Element name={CATEGORY_TITLES[0]}>
+                  <Typography style={sectionTitleStyles} variant="h4">
+                    {CATEGORY_TITLES[0]}
+                  </Typography>
+                </Element>
+                <Summary summary={test.upgradedResponse1} />
+                <Element name={CATEGORY_TITLES[1]}>
+                  <Typography style={sectionTitleStyles} variant="h4">
+                    {CATEGORY_TITLES[1]}
+                  </Typography>
+                </Element>
+                <Summary summary={test.upgradedResponse2} />
+                <Element name={CATEGORY_TITLES[2]}>
+                  <Typography style={sectionTitleStyles} variant="h4">
+                    {CATEGORY_TITLES[2]}
+                  </Typography>
+                </Element>
+                <Summary summary={test.upgradedResponse3} />
+                <Element name={CATEGORY_TITLES[3]}>
+                  <Typography style={sectionTitleStyles} variant="h4">
+                    {CATEGORY_TITLES[3]}
+                  </Typography>
+                </Element>
+                <Summary summary={test.upgradedResponse4} />
+                <Element name={CATEGORY_TITLES[4]}>
+                  <Typography style={sectionTitleStyles} variant="h4">
+                    {CATEGORY_TITLES[4]}
+                  </Typography>
+                </Element>
+                <Summary summary={test.upgradedResponse5} containerStyle={{ paddingBottom: 100 }} />
+              </div>
+              <Box
+                sx={{
+                  height: '100%',
+                  minWidth: 300,
+                  position: 'sticky',
+                  top: 100,
+                  left: 0,
+                  '& .MuiTypography-root': {
+                    paddingBottom: 2,
+                  },
+                  '@media (max-width: 870px)': {
+                    display: 'none',
+                  },
+                }}
+                style={{ marginRight: 10 }}
+              >
+                <div
+                  style={{
+                    borderLeft: `1px solid ${palette.divider}`,
+                    paddingLeft: 10,
+                  }}
+                >
+                  {CATEGORY_TITLES.map((title) => (
+                    <Link key={title} to={title} smooth duration={400}>
+                      <MUILink style={{ cursor: 'pointer' }}>
+                        <Typography>{title}</Typography>
+                      </MUILink>
+                    </Link>
+                  ))}
+                </div>
+              </Box>
+            </>
           ) : (
             <Summary
               summary={test?.gptResponse}

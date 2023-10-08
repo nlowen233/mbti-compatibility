@@ -71,7 +71,7 @@ export const DesktopResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps)
       {isUpgraded && (
         <Box
           sx={{
-            height: '80vh',
+            height: '100%',
             minWidth: 300,
             position: 'sticky',
             top: 100,
