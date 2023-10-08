@@ -22,7 +22,7 @@ export const Desktop = ({ test, amountOfQuestions }: TestNodeProps) => {
   }
   const score = getCompletionScore()
   const topResults = [...(test?.results || [])].sort((a, b) => b.compatibilityScore - a.compatibilityScore).slice(0, 3)
-  const buttonText = TestsPageUtils.testStatusToButtonText(test?.status || 0)
+  const buttonText = TestsPageUtils.testStatusToButtonText(test?.status || 0, test?.isUpgraded)
   const progressScore = score * 100
   return (
     <Box

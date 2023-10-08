@@ -91,6 +91,8 @@ const explainResultsPromptTemplate = (user: User, scores: ScoreNode[], results: 
     scores ? JSON.stringify(scores) : 'null'
   }\nresults:\n${results ? JSON.stringify(results) : 'null'}`
 
+const windowExists = () => typeof window === 'object' && window !== null
+
 export const Constants = {
   MBTIOptions,
   Ages,
@@ -112,4 +114,5 @@ export const Constants = {
   isMaintenance: process.env.NEXT_PUBLIC_MAINTENANCE === TRUE(),
   enhancePrice: !Number.isNaN(Number(process.env.NEXT_PUBLIC_ENHANCE_PRICE)) ? Number(process.env.NEXT_PUBLIC_ENHANCE_PRICE) : null,
   stripePublishableKey: process.env.NEXT_PUBLIC_PUBLISHABLE_KEY,
+  windowExists,
 }

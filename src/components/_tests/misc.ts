@@ -1,5 +1,5 @@
 import { Convert } from '@/misc/Convert'
-import { Test, TestStatus } from '@/types/SQLTypes'
+import { Test, TestStatus, TestUpgradeStatus } from '@/types/SQLTypes'
 import { SQLTestWithQuestions } from './types'
 
 const convertSqlTestAndQuestionNum = (tests: Partial<SQLTestWithQuestions>[]): [Partial<Test>[], number] => {
@@ -21,10 +21,10 @@ const indexToVariant = (i: number) => {
   }
 }
 
-const testStatusToButtonText = (status: number) => {
+const testStatusToButtonText = (status: number, upgradedStatus?: number) => {
   switch (status) {
     case TestStatus.Finished:
-      return 'Go To Results'
+      return `Go To ${upgradedStatus === TestUpgradeStatus.upgraded ? 'Full' : ''} Results`
     case TestStatus.InProgress:
       return 'Finish Test'
     case TestStatus.New:

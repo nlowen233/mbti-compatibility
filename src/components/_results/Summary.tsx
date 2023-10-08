@@ -1,6 +1,6 @@
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { Box, Button, Typography, useTheme } from '@mui/material'
-import { Interweave } from 'interweave'
+import { Interweave } from '../Interweave'
 
 type Props = {
   containerRef?: React.Ref<HTMLDivElement>

@@ -1,5 +1,5 @@
 import { TestUpgradeStatus } from '@/types/SQLTypes'
-import { Box, Button, Link as MUILink, Typography, useTheme } from '@mui/material'
+import { Box, Button, Typography, useTheme } from '@mui/material'
 import { useState } from 'react'
 import { Element, Link } from 'react-scroll'
 import { ScoreNode } from '../ScoreNode'
@@ -13,7 +13,7 @@ const sectionTitleStyles = ResultsUtils.sectionTitleStyles()
 export const MobileResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps) => {
   const { palette } = useTheme()
   const isUpgraded = test?.isUpgraded === TestUpgradeStatus.upgraded
-  const [page, setPage] = useState<0 | 1>(1)
+  const [page, setPage] = useState<0 | 1>(1) //TODO: Figure out why this can't be 1
   return (
     <>
       <div style={{ paddingTop: 20, display: 'flex', justifyContent: 'center' }}>
@@ -94,9 +94,17 @@ export const MobileResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps) 
                 >
                   {CATEGORY_TITLES.map((title) => (
                     <Link key={title} to={title} smooth duration={400}>
-                      <MUILink style={{ cursor: 'pointer' }}>
-                        <Typography>{title}</Typography>
-                      </MUILink>
+                      <Typography
+                        sx={{
+                          cursor: 'pointer',
+                          textDecoration: 'underline',
+                          ':hover': {
+                            color: palette.primary.light,
+                          },
+                        }}
+                      >
+                        {title}
+                      </Typography>
                     </Link>
                   ))}
                 </div>

@@ -1,5 +1,5 @@
 import { TestUpgradeStatus } from '@/types/SQLTypes'
-import { Box, Link as MUILink, Typography, useTheme } from '@mui/material'
+import { Box, Typography, useTheme } from '@mui/material'
 import { Element, Link } from 'react-scroll'
 import { ScoreNode } from '../ScoreNode'
 import { Summary } from './Summary'
@@ -90,9 +90,19 @@ export const DesktopResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps)
           >
             {CATEGORY_TITLES.map((title) => (
               <Link key={title} to={title} smooth duration={400}>
-                <MUILink style={{ cursor: 'pointer' }}>
-                  <Typography>{title}</Typography>
-                </MUILink>
+                <Link key={title} to={title} smooth duration={400}>
+                  <Typography
+                    sx={{
+                      cursor: 'pointer',
+                      textDecoration: 'underline',
+                      ':hover': {
+                        color: palette.primary.light,
+                      },
+                    }}
+                  >
+                    {title}
+                  </Typography>
+                </Link>
               </Link>
             ))}
           </div>
