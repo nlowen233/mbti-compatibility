@@ -9,7 +9,6 @@ import { Paths } from '@/misc/Paths'
 import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
 import { SQLResult } from '@/types/SQLTypes'
-import { APIRes } from '@/types/misc'
 import { getSession } from '@auth0/nextjs-auth0'
 import { UserContext } from '@auth0/nextjs-auth0/client'
 import { Button, Typography, useTheme } from '@mui/material'
@@ -17,6 +16,7 @@ import { Elements } from '@stripe/react-stripe-js'
 import { loadStripe } from '@stripe/stripe-js'
 import { db } from '@vercel/postgres'
 import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 
 if (!Constants.stripePublishableKey) {
@@ -61,20 +61,22 @@ export default function EnhanceResults() {
   const { pushPopUpMessage } = useContext(PopUpContext)
   const { toggle } = useContext(LoadingOverlayContext)
   const [clientSecret, setClientSecret] = useState<string | undefined>(undefined)
-
+  const router = useRouter()
   const onUpgradeClick = async () => {
-    let res: APIRes<string> | undefined
-    let error: string | undefined
-    toggle(true)
-    try {
-      res = await API.createPaymentIntent()
-    } catch (err) {
-      error = err as string
+    const resultID = router.query.id as string | undefined
+    if (!resultID) {
+      return pushPopUpMessage({
+        message: `Sorry we can't determine which results to upgrade`,
+        title: 'Error upgrading test',
+        type: 'error',
+      })
     }
+    toggle(true)
+    let res = await API.createPaymentIntent({ resultID })
     toggle(false)
     const secret = res?.res
-    if (error || !secret) {
-      return pushPopUpMessage({ message: error || Constants.unknownError, title: 'Error upgrading test', type: 'error' })
+    if (res.err || !secret) {
+      return pushPopUpMessage({ message: res.message || Constants.unknownError, title: 'Error upgrading test', type: 'error' })
     }
     setClientSecret(secret)
   }

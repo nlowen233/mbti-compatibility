@@ -1,3 +1,4 @@
+import { LocalTextPaths } from '@/misc/LocalTextPaths'
 import { Scores } from './SQLTypes'
 
 export type Option<T extends string | number> = { value: T; display: string }
@@ -61,4 +62,27 @@ export interface UserProfileServerSide {
   updated_at?: string | null
   org_id?: string | null
   [key: string]: unknown // Any custom claim which could be in the profile
+}
+
+export type TestIDReq = {
+  testID: string
+}
+
+export type StripeMetadata = {
+  testID: string
+}
+
+export type AnalystResponse = {
+  aboutTopMatch: string
+  conclusion: string
+  topCognitiveFunction: string
+  whatYouExpected: string
+  whereToFind: string
+}
+
+export type GetGPTEssayParams = {
+  introPromptKey: keyof typeof LocalTextPaths
+  dataExplainedPropmptKey: keyof typeof LocalTextPaths
+  userDataPrompt: string
+  essayPromptKey: keyof typeof LocalTextPaths
 }

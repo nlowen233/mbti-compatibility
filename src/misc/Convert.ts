@@ -6,10 +6,12 @@ import {
   SQLTestAndNickname,
   SQLTestAnswers,
   SQLUser,
+  SQLUserWithTestResults,
   Test,
   TestAndNickname,
   TestAnswers,
   User,
+  UserWithTestResults,
 } from '@/types/SQLTypes'
 import { MBTI } from '@/types/misc'
 import { Utils } from './Utils'
@@ -101,6 +103,12 @@ const sqlToUser = ({ age, expected_mbti_type, gender, id, mbti_type }: SQLUser):
   mbtiType: mbti_type || '',
 })
 
+const sqlToUserWithTestResults = (params: SQLUserWithTestResults): UserWithTestResults => ({
+  ...sqlToUser(params),
+  functionScores: Utils.parsedJSONOrUndefined(params.function_scores),
+  results: Utils.parsedJSONOrUndefined(params.results_data),
+})
+
 export const Convert = {
   indexStateToQueryParams,
   sqlToTest,
@@ -109,4 +117,5 @@ export const Convert = {
   functionToScore,
   sqlToTestAndNickname,
   sqlToUser,
+  sqlToUserWithTestResults,
 }

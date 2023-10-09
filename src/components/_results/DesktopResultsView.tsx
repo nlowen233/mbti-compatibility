@@ -90,19 +90,17 @@ export const DesktopResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps)
           >
             {CATEGORY_TITLES.map((title) => (
               <Link key={title} to={title} smooth duration={400}>
-                <Link key={title} to={title} smooth duration={400}>
-                  <Typography
-                    sx={{
-                      cursor: 'pointer',
-                      textDecoration: 'underline',
-                      ':hover': {
-                        color: palette.primary.light,
-                      },
-                    }}
-                  >
-                    {title}
-                  </Typography>
-                </Link>
+                <Typography
+                  sx={{
+                    cursor: 'pointer',
+                    textDecoration: 'underline',
+                    ':hover': {
+                      color: palette.primary.light,
+                    },
+                  }}
+                >
+                  {title}
+                </Typography>
               </Link>
             ))}
           </div>

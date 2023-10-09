@@ -5,8 +5,6 @@ export type SQLTest = {
   user_id: string
   status: number
   created_at: string
-  function_scores: string | null
-  results_data: string | null
   gpt_response: string | null
   is_upgraded: number | null
   upgraded_response1: string | null
@@ -14,10 +12,16 @@ export type SQLTest = {
   upgraded_response3: string | null
   upgraded_response4: string | null
   upgraded_response5: string | null
-} & SQLTestAnswers
+} & SQLTestAnswers &
+  SQLTestResults
 
 export type SQLTestAnswers = {
   answers: string | null
+}
+
+export type SQLTestResults = {
+  function_scores: string | null
+  results_data: string | null
 }
 
 export type SQLTestAndNickname = SQLTest & {
@@ -29,8 +33,6 @@ export type Test = {
   userId: string
   status: TestStatus
   createdAt: string
-  functionScores: ScoreNode[]
-  results: MBTIScoreData[]
   gptResponse: string
   isUpgraded: number
   upgradedResponse1: string
@@ -38,7 +40,13 @@ export type Test = {
   upgradedResponse3: string
   upgradedResponse4: string
   upgradedResponse5: string
-} & TestAnswers
+} & TestAnswers &
+  TestResults
+
+export type TestResults = {
+  functionScores: ScoreNode[]
+  results: MBTIScoreData[]
+}
 
 export type TestAnswers = {
   answers: Answer[]
@@ -102,6 +110,8 @@ export type User = {
   expectedMbtiType: string
 }
 
+export type UserWithTestResults = User & TestResults
+
 export type SQLResult = {
   result: boolean
 }
@@ -111,3 +121,5 @@ export const enum TestUpgradeStatus {
   successfullyPurchasedWaitingForGPT = 5,
   upgraded = 10,
 }
+
+export type SQLUserWithTestResults = SQLUser & SQLTestResults

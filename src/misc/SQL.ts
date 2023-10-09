@@ -32,7 +32,20 @@ const updateQuestions = async (client: VercelPoolClient, questions: Question[]):
 
 const updateTest = async (
   client: VercelPoolClient,
-  { id, answers, status, functionScores, gptResponse, results }: Partial<Test>,
+  {
+    id,
+    answers,
+    status,
+    functionScores,
+    gptResponse,
+    results,
+    isUpgraded,
+    upgradedResponse1,
+    upgradedResponse2,
+    upgradedResponse3,
+    upgradedResponse4,
+    upgradedResponse5,
+  }: Partial<Test>,
 ): Promise<APIRes<QueryResult<any>>> => {
   let error
   const params = []
@@ -42,6 +55,12 @@ const updateTest = async (
   params.push(Utils.parameterize(functionScores))
   params.push(Utils.parameterize(results))
   params.push(Utils.parameterize(gptResponse))
+  params.push(Utils.parameterize(isUpgraded))
+  params.push(Utils.parameterize(upgradedResponse1))
+  params.push(Utils.parameterize(upgradedResponse2))
+  params.push(Utils.parameterize(upgradedResponse3))
+  params.push(Utils.parameterize(upgradedResponse4))
+  params.push(Utils.parameterize(upgradedResponse5))
   let res = null
   try {
     res = await client.query(SQLFunctions.updateTest(params))

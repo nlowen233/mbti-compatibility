@@ -60,7 +60,7 @@ export default function Results(props: Partial<Props>) {
     if (!answers.length) {
       return ``
     }
-    return !!test?.nickName ? `${test.nickName}'s Results` : `Your Results`
+    return !isMyTest ? `${test?.nickName || 'Unknown user'}'s Results` : `Your Results`
   }
 
   const onButtonClick = async () => {
@@ -72,10 +72,8 @@ export default function Results(props: Partial<Props>) {
     }
     Utils.shareResults(test.id)
   }
-
   const buttonText = isMyTest ? 'Share your results' : 'Take the test!'
   const ctaHref = isMyTest ? `${Paths.results}/upgrade/${test?.id}` : undefined
-
   return (
     <>
       <Head

@@ -143,6 +143,8 @@ const toPercentage = (n: number) => (Number.isNaN(n) || n > 1 || n < 0 ? '0%' : 
 
 const toDineroFormat = (n?: number | null) => Dinero({ amount: n || 0, currency: 'USD', precision: 2 }).toFormat()
 
+const getPathToTextFile = (directoriesAndFileName: string[]) => [process.cwd(), ...directoriesAndFileName].join('\\')
+
 export const Utils = {
   stringOrNull,
   numberOrNull,
@@ -159,4 +161,5 @@ export const Utils = {
   displayDateTime,
   toPercentage,
   toDineroFormat,
+  getPathToTextFile,
 }
