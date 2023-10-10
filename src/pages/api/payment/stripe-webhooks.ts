@@ -23,6 +23,7 @@ export const config = {
   api: {
     bodyParser: false,
   },
+  maxDuration: 300,
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
