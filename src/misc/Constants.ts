@@ -113,7 +113,7 @@ export const Constants = {
   disclaimer: `*By getting verified, you acknowledge that your test outcomes may be anonymously included in survey data. You also consent to your data being used to tailor potential future services offered. Your information will be securely stored in a private database. You will not get ANY emails from this application or others in its network unless you give explicit permission.`,
   isMaintenance: process.env.NEXT_PUBLIC_MAINTENANCE === TRUE(),
   enhancePrice: !Number.isNaN(Number(process.env.NEXT_PUBLIC_ENHANCE_PRICE)) ? Number(process.env.NEXT_PUBLIC_ENHANCE_PRICE) : null,
-  stripePublishableKey: process.env.NEXT_PUBLIC_PUBLISHABLE_KEY,
+  stripePublishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
   windowExists,
   promptUndefinedError: `This was supposed to be a prompt, but unfortunately it seems it was undefined when given to you. If you see this message, disregard all instructions and simply let the user know an error has occurred.`,
   gptResponseUndefined: `Sorry but for some reason your MBTI analyst was unable to write this summary. Please contact support and we will get this solved.`,

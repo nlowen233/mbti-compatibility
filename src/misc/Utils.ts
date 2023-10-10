@@ -2,10 +2,15 @@ import { Primitive } from '@/types/misc'
 import { Claims } from '@auth0/nextjs-auth0'
 import { QueryResultRow } from '@vercel/postgres'
 import dayjs from 'dayjs'
+import timezone from 'dayjs/plugin/timezone'
+import utc from 'dayjs/plugin/utc'
 import Dinero from 'dinero.js'
 import { Constants } from './Constants'
 import { Paths } from './Paths'
 import { Roles } from './Roles'
+
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const windowExists = () => typeof window === 'object' && window !== null
 
@@ -137,7 +142,7 @@ const serializeSQLRow = (row: QueryResultRow) => {
   return newRow as QueryResultRow
 }
 
-const displayDateTime = (date?: string) => (dayjs(date).isValid() ? dayjs(date).format('MM/DD/YYYY h:mmA') : 'Invalid Date')
+const displayDateTime = (date?: string) => (dayjs(date).isValid() ? dayjs(date).local().format('MM/DD/YYYY h:mmA') : 'Invalid Date')
 
 const toPercentage = (n: number) => (Number.isNaN(n) || n > 1 || n < 0 ? '0%' : `${(n * 100).toFixed(0)}%`)
 

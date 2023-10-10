@@ -25,7 +25,6 @@ export const ResponseModal = ({ close, text, title, type }: Props) => {
       PaperProps={{
         sx: {
           maxWidth: 800,
-          borderRadius: 3,
           '@media (max-width: 870px)': {
             maxWidth: 600,
           },

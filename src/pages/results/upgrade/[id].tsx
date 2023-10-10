@@ -20,7 +20,7 @@ import { useRouter } from 'next/router'
 import { useContext, useState } from 'react'
 
 if (!Constants.stripePublishableKey) {
-  throw new Error('Missing environment variable for strip publishable key')
+  throw new Error('Missing environment variable for stripe publishable key')
 }
 const stripePromise = loadStripe(Constants.stripePublishableKey)
 
