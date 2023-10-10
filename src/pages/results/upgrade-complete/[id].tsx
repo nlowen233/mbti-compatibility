@@ -10,7 +10,7 @@ import { useContext, useEffect, useState } from 'react'
 
 const FUNC_RUN_INTERVAL_IN_SEC = 10
 const FUNC_RUN_LIMIT = 50
-const STRIPE_SUCCESS = 'successful'
+const STRIPE_SUCCESS = 'succeeded'
 const FAILURE_REDIRECT_TIME_IN_SEC = 10
 
 export default function UpgradeComplete() {

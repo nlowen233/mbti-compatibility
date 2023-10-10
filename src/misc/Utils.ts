@@ -148,8 +148,6 @@ const toPercentage = (n: number) => (Number.isNaN(n) || n > 1 || n < 0 ? '0%' : 
 
 const toDineroFormat = (n?: number | null) => Dinero({ amount: n || 0, currency: 'USD', precision: 2 }).toFormat()
 
-const getPathToTextFile = (directoriesAndFileName: string[]) => [process.cwd(), ...directoriesAndFileName].join('\\')
-
 const constructCompletionRoute = (testID: string) =>
   windowExists()
     ? `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}${Paths.results}${
@@ -173,6 +171,5 @@ export const Utils = {
   displayDateTime,
   toPercentage,
   toDineroFormat,
-  getPathToTextFile,
   constructCompletionRoute,
 }
