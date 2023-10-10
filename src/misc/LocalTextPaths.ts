@@ -10,5 +10,5 @@ export const LocalTextPaths = {
   topCogFuncPrompt: getPathToTextFile(['prompts', 'essays', 'top-cognitive-function.txt']),
   whatYouExpectedPrompt: getPathToTextFile(['prompts', 'essays', 'what-you-expected.txt']),
   whereToFindPrompt: getPathToTextFile(['prompts', 'essays', 'where-to-find.txt']),
-  freeTierPrompt: getPathToTextFile(['prompts', 'explain-my-results.txt']),
+  freeTierPrompt: path.join(process.cwd(), 'prompts', 'explain-my-results.txt'),
 }
