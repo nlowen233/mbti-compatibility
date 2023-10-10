@@ -47,7 +47,6 @@ export const getServerSideProps: GetServerSideProps<{}> = async ({ req, res, par
       redirect: {
         destination: Paths.notFound,
         permanent: false,
-        statusCode: '401',
       },
     }
   }
@@ -62,9 +61,9 @@ export default function EnhanceResults() {
   const { toggle } = useContext(LoadingOverlayContext)
   const [clientSecret, setClientSecret] = useState<string | undefined>(undefined)
   const router = useRouter()
+  const testID = router.query.id as string | undefined
   const onUpgradeClick = async () => {
-    const resultID = router.query.id as string | undefined
-    if (!resultID) {
+    if (!testID) {
       return pushPopUpMessage({
         message: `Sorry we can't determine which results to upgrade`,
         title: 'Error upgrading test',
@@ -72,7 +71,7 @@ export default function EnhanceResults() {
       })
     }
     toggle(true)
-    let res = await API.createPaymentIntent({ resultID })
+    let res = await API.createPaymentIntent({ testID })
     toggle(false)
     const secret = res?.res
     if (res.err || !secret) {
@@ -109,7 +108,7 @@ export default function EnhanceResults() {
             </Typography>
             {clientSecret && (
               <Elements options={{ clientSecret, appearance: { theme: 'stripe' } }} stripe={stripePromise}>
-                <CheckoutForm email={user?.email as string} />
+                <CheckoutForm email={user?.email as string} testID={testID as string} />
               </Elements>
             )}
             {!clientSecret && (

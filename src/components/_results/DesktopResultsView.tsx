@@ -33,9 +33,9 @@ export const DesktopResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps)
           ))}
       </Box>
       {!isUpgraded ? (
-        <Summary summary={test?.gptResponse} containerStyle={{ maxWidth: 800 }} ctaHref={ctaHref} ctaText={ctaText} />
+        <Summary summary={test?.gptResponse} containerStyle={{ maxWidth: 800, overflowX: 'hidden' }} ctaHref={ctaHref} ctaText={ctaText} />
       ) : (
-        <div style={{ maxWidth: 800 }}>
+        <div style={{ maxWidth: 800, overflowX: 'hidden' }}>
           <Element name={CATEGORY_TITLES[0]}>
             <Typography style={sectionTitleStyles} variant="h4">
               {CATEGORY_TITLES[0]}

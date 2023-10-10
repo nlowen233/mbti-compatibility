@@ -1,3 +1,4 @@
+import { ZIndex } from '@/misc/ZIndex'
 import { MenuOption } from '@/types/misc'
 import { UserContext } from '@auth0/nextjs-auth0/client'
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -32,6 +33,7 @@ export const MenuWrapper = ({ children, options }: Props) => {
             top: 0,
             padding: 20,
             cursor: 'pointer',
+            zIndex: ZIndex.gearIcon,
           }}
           fontSize="medium"
           onClick={handleClickListItem}
@@ -46,6 +48,7 @@ export const MenuWrapper = ({ children, options }: Props) => {
           'aria-labelledby': 'lock-button',
           role: 'listbox',
         }}
+        disableScrollLock
       >
         {options.map((option) => (
           <MenuItem key={option.title} onClick={() => handleOptionClick(option.onClick)} disabled={option.disabled}>

@@ -1,5 +1,4 @@
-// pages/api/stripe-webhook.js
-
+import { APIUtils } from '@/misc/APIUtils'
 import { Convert } from '@/misc/Convert'
 import { OpenAI } from '@/misc/OpenAI'
 import { SQL } from '@/misc/SQL'
@@ -28,17 +27,35 @@ export const config = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const signature = req.headers['stripe-signature']
-  if (typeof signature !== 'string') {
-    return res.status(401).end()
+  if (!signature) {
+    res.status(400).end()
+    return
+  }
+  let rawBody: string | undefined
+  let rawError: string | undefined
+  try {
+    rawBody = await APIUtils.getRawBody(req)
+  } catch (err) {
+    rawError = err as string
+  }
+  if (rawError) {
+    res.status(500).end()
+    return
   }
   let event: Stripe.Event | undefined
+  let constructError: string | undefined
   try {
-    event = stripe.webhooks.constructEvent(req.body, signature, SIGNING_SECRET as string)
+    event = stripe.webhooks.constructEvent(rawBody as string, signature, SIGNING_SECRET as string)
   } catch (err) {
-    return res.send(400)
+    constructError = err as string
   }
-  const { testID } = event.data.object as StripeMetadata
-  if (event.type === 'payment_intent.succeeded') {
+  if (constructError) {
+    res.status(500).end()
+    return
+  }
+  const paymentIntent = event?.data.object as Stripe.PaymentIntent
+  const { testID } = paymentIntent.metadata as StripeMetadata
+  if (event?.type === 'payment_intent.succeeded' || event?.type === 'payment_intent.payment_failed') {
     let client: VercelPoolClient | undefined
     let error: string | undefined
     try {
@@ -47,10 +64,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       error = err as string
     }
     if (error || !client) {
-      return res.status(500).send({ err: true, message: error as string, res: null })
+      res.status(500).end()
+      return
     } else {
-      //if we are able to access the db then we can save errors on our side and send back 200
+      //if we are able to access the db then we can save errors on our side and send back 200, no other responses needed after this
       res.status(200).end()
+    }
+    if (event.type === 'payment_intent.payment_failed') {
+      SQL.query(client, SQLQueries.insertError(`Payment intent failed for test ID: ${testID}`, ErrorSeverity.Critical))
+      client.release()
+      return
     }
     const userWRRes = await SQL.query<SQLUserWithTestResults>(client, SQLQueries.getUserByTestID(testID))
     if (userWRRes.err) {
@@ -76,7 +99,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       client.release()
       return
     }
-    const gptResponse = await OpenAI.getAnalystFullExplanation(userWithResults, userWithResults.functionScores, userWithResults.results)
+    const setTestToWaiting = await SQL.updateTest(client, { isUpgraded: TestUpgradeStatus.successfullyPurchasedWaitingForGPT, id: testID })
+    if (setTestToWaiting.err) {
+      SQL.query(client, SQLQueries.insertError(`Could not set test to awaiting upgrade status. Test ID was ${testID}`, ErrorSeverity.Error))
+    }
+    const gptResponse = await OpenAI.getFullAnalysis(userWithResults, userWithResults.functionScores, userWithResults.results)
     if (gptResponse.err) {
       SQL.query(
         client,
@@ -91,10 +118,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const updateRes = await SQL.updateTest(client, {
       upgradedResponse1: gptResponse.res?.aboutTopMatch,
       upgradedResponse2: gptResponse.res?.topCognitiveFunction,
-      upgradedResponse3: gptResponse.res?.whatYouExpected,
-      upgradedResponse4: gptResponse.res?.whereToFind,
+      upgradedResponse3: gptResponse.res?.whereToFind,
+      upgradedResponse4: gptResponse.res?.whatYouExpected,
       upgradedResponse5: gptResponse.res?.conclusion,
       isUpgraded: TestUpgradeStatus.upgraded,
+      id: testID,
     })
     if (updateRes.err) {
       SQL.query(
@@ -110,5 +138,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     client.release()
   }
   //no webhook for this
-  return res.status(200).end()
+  res.status(200).end()
+  return
 }

@@ -1,9 +1,9 @@
 // This code is for v4 of the openai package: npmjs.com/package/openai
 import { MBTIScoreData, ScoreNode } from '@/components/_results/misc'
 import { User } from '@/types/SQLTypes'
-import { APIRes, AnalystResponse, GetGPTEssayParams } from '@/types/misc'
+import { APIRes, AnalystResponse, ExecuteConversationParams, GetGPTEssayParams, GetNextGPTParams } from '@/types/misc'
 import _OpenAI from 'openai'
-import { ChatCompletion } from 'openai/resources/chat/index.mjs'
+import { ChatCompletion, ChatCompletionMessage } from 'openai/resources/chat/index.mjs'
 import { Constants } from './Constants'
 import { readLocalTextFile } from './readLocalTextFile'
 
@@ -53,7 +53,7 @@ const getResultsExplanation = async (user: User, scores: ScoreNode[], results: M
 const getAnalystFullExplanation = async (user: User, scores: ScoreNode[], results: MBTIScoreData[]): Promise<APIRes<AnalystResponse>> => {
   const userDataPrompt = Constants.explainResultsPromptTemplate(user, scores, results)
   const partialParams: Partial<GetGPTEssayParams> = {
-    dataExplainedPropmptKey: 'dataExplainedPrompt',
+    dataExplainedPromptKey: 'dataExplainedPrompt',
     introPromptKey: 'introPrompt',
     userDataPrompt,
   }
@@ -88,13 +88,13 @@ const getAnalystFullExplanation = async (user: User, scores: ScoreNode[], result
 }
 
 const getEssay = async ({
-  dataExplainedPropmptKey,
+  dataExplainedPromptKey,
   introPromptKey,
   essayPromptKey,
   userDataPrompt,
 }: GetGPTEssayParams): Promise<APIRes<string>> => {
   const [dataExplainedFileRes, introFileRes, essayFileRes] = await Promise.all([
-    readLocalTextFile(dataExplainedPropmptKey),
+    readLocalTextFile(dataExplainedPromptKey),
     readLocalTextFile(introPromptKey),
     readLocalTextFile(essayPromptKey),
   ])
@@ -115,7 +115,7 @@ const getEssay = async ({
   let gptError: string | undefined
   try {
     gptRes = await openai.chat.completions.create({
-      model: 'gpt-4',
+      model: 'gpt-3.5-turbo-16k',
       messages: [
         {
           role: 'system',
@@ -142,7 +142,145 @@ const getEssay = async ({
   }
 }
 
+const getNextResponse = ({
+  conversationArray,
+  nextChat,
+  expGrowthRate = 2,
+  initialBackoff = 0,
+  model,
+  maxAttempts = 10,
+}: GetNextGPTParams) =>
+  new Promise<APIRes<ChatCompletionMessage[]>>((res) => {
+    let executions = 0
+    const getNextChat = () => {
+      executions += 1
+      return openai.chat.completions.create({
+        model: model || 'gpt-3.5-turbo-16k',
+        messages: [...conversationArray, nextChat],
+        temperature: 1,
+        max_tokens: 1200,
+        top_p: 1,
+        frequency_penalty: 0,
+        presence_penalty: 0,
+      })
+    }
+    getNextChat()
+      .then((gptRes) => {
+        res({
+          err: false,
+          res: [...conversationArray, nextChat, { role: 'assistant', content: gptRes?.choices[0].message.content }],
+        })
+      })
+      .catch((err) => {
+        console.log(err)
+        if (executions >= maxAttempts) {
+          res({
+            err: true,
+            message: 'Max attempts exceeded, exponential backoff will cease',
+          })
+        } else if (err?.status === 429) {
+          setTimeout(getNextChat, Math.pow(executions, expGrowthRate) + initialBackoff)
+        } else {
+          res({
+            err: true,
+            message: err as string,
+          })
+        }
+      })
+  })
+
+const executeConversation = async ({
+  initialConversation,
+  nextChats,
+  expGrowthRate,
+  initialBackoff,
+  maxAttempts,
+  model,
+}: ExecuteConversationParams): Promise<APIRes<string[]>> => {
+  let conversation = initialConversation
+  let gptResponses: string[] = []
+  let error: string | undefined
+  for (const chat of nextChats) {
+    const nextResponseRes = await getNextResponse({
+      conversationArray: conversation,
+      nextChat: chat,
+      expGrowthRate,
+      initialBackoff,
+      maxAttempts,
+      model,
+    })
+    if (nextResponseRes.err) {
+      error = nextResponseRes.message || Constants.unknownError
+      break
+    }
+    if (!nextResponseRes.res) {
+      error = 'getNextResponse did not throw an error, but had a falsy response'
+      break
+    }
+    conversation = nextResponseRes.res
+    const lastChatParam = conversation[conversation.length - 1]
+    const lastChat = lastChatParam.content
+    gptResponses.push(lastChat || Constants.unknownError)
+  }
+  return {
+    err: !!error,
+    message: error,
+    res: gptResponses,
+  }
+}
+
+const getFullAnalysis = async (user: User, scores: ScoreNode[], results: MBTIScoreData[]): Promise<APIRes<AnalystResponse>> => {
+  const userDataPrompt = Constants.explainResultsPromptTemplate(user, scores, results)
+  const localFilRes = await Promise.all([
+    readLocalTextFile('introPrompt'),
+    readLocalTextFile('dataExplainedPrompt'),
+    readLocalTextFile('aboutTopMatchPrompt'),
+    readLocalTextFile('topCogFuncPrompt'),
+    readLocalTextFile('whereToFindPrompt'),
+    readLocalTextFile('whatYouExpectedPrompt'),
+    readLocalTextFile('conclusionPrompt'),
+  ])
+  if (localFilRes.some((apiRes) => apiRes.err)) {
+    return {
+      err: true,
+      message: localFilRes
+        .filter((apiRes) => apiRes.err)
+        .map((apiRes) => apiRes.message)
+        .join(','),
+    }
+  }
+  const prompts = localFilRes.map((apiRes) => apiRes.res) as string[]
+  const conversationRes = await executeConversation({
+    initialConversation: [
+      {
+        role: 'system',
+        content: `${prompts[0]}\n\n]n${prompts[1]}\n\n${userDataPrompt}`,
+      },
+    ],
+    nextChats: prompts.slice(2).map((essay) => ({ content: essay, role: 'user' })),
+    model: 'gpt-4',
+  })
+  if (conversationRes.err) {
+    return {
+      err: conversationRes.err,
+      message: conversationRes.message,
+    }
+  }
+  const gptResponses = conversationRes.res?.length ? conversationRes.res : []
+  return {
+    err: false,
+    res: {
+      aboutTopMatch: gptResponses[0],
+      topCognitiveFunction: gptResponses[1],
+      whereToFind: gptResponses[2],
+      whatYouExpected: gptResponses[3],
+      conclusion: gptResponses[4],
+    },
+  }
+}
+
 export const OpenAI = {
   getResultsExplanation,
   getAnalystFullExplanation,
+  getFullAnalysis,
 }

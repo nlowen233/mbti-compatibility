@@ -22,9 +22,10 @@ export const SQLQueries = {
   isTestValidToUpgrade: (testID: string, userID: string) =>
     `SELECT EXISTS (SELECT 1 FROM tests WHERE id = ${Utils.parameterize(testID)} AND user_id = ${Utils.parameterize(
       userID,
-    )} status = 3 AND (is_upgraded = 0 OR is_upgraded IS NULL)) AS result`,
+    )} AND status = 3 AND (is_upgraded = 0 OR is_upgraded IS NULL)) AS result`,
   getUserByTestID: (testID: string) =>
     `SELECT u.*, t.function_scores, t.results_data FROM users u JOIN tests t ON u.id = t.user_id WHERE t.id = ${Utils.parameterize(
       testID,
     )}`,
+  isTestUpgradeComplete: (testID: string) => `SELECT (is_upgraded = 10) AS result FROM tests WHERE id = ${Utils.parameterize(testID)}`,
 }

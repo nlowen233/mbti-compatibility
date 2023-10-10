@@ -52,7 +52,6 @@ export default function Results(props: Partial<Props>) {
   const test = props.res ? Convert.sqlToTestAndNickname(props.res) : undefined
   const answers = test?.answers || []
   const isMyTest = test?.userId === user?.sub
-
   const getHeader = () => {
     if (isFallback) {
       return `Hang on while we get your results ready...`
@@ -62,7 +61,6 @@ export default function Results(props: Partial<Props>) {
     }
     return !isMyTest ? `${test?.nickName || 'Unknown user'}'s Results` : `Your Results`
   }
-
   const onButtonClick = async () => {
     if (test?.userId !== user?.sub) {
       return router.push(Paths.home)
@@ -77,7 +75,7 @@ export default function Results(props: Partial<Props>) {
   return (
     <>
       <Head
-        title={`${test?.nickName}'s Compatibility Results`}
+        title={`${isMyTest ? 'Your' : `${test?.nickName || ''}`} Compatibility Results`}
         description={`Check out the rankings and summary of ${test?.nickName}'s MBTI compatibility results`}
       />
       <MainWrapper>

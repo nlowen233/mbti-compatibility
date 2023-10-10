@@ -1,7 +1,7 @@
 import { IndexPageState } from '@/components/_index/types'
 import { Question, Test } from '@/types/SQLTypes'
 import axios, { AxiosError, AxiosResponse } from 'axios'
-import { APIRes, ResultIDReq } from '../types/misc'
+import { APIRes, TestIDReq } from '../types/misc'
 import { Constants } from './Constants'
 import { Utils } from './Utils'
 
@@ -61,7 +61,10 @@ const getTestAnswers = ({ id }: Partial<Test>) =>
 const updateQuestions = (req: Question[]) =>
   createAPIFunction<Partial<Question>[]>({ route: '/api/questions/update', body: req, method: 'POST' })
 const updateTest = (req: Partial<Test>) => createAPIFunction({ route: '/api/tests/update', body: req, method: 'POST' })
-const createPaymentIntent = (req: ResultIDReq) => createAPIFunction<string>({ route: '/api/payment/create-payment-intent' })
+const createPaymentIntent = (req: TestIDReq) =>
+  createAPIFunction<string>({ route: '/api/payment/create-payment-intent', body: req, method: 'POST' })
+const checkIsTestUpgradeComplete = ({ id }: Partial<Test>) =>
+  createAPIFunction<boolean>({ route: '/api/tests/isTestUpgradeComplete', method: 'GET', query: { id } })
 
 export const API = {
   loginStartTest,
@@ -69,4 +72,5 @@ export const API = {
   updateQuestions,
   updateTest,
   createPaymentIntent,
+  checkIsTestUpgradeComplete,
 }

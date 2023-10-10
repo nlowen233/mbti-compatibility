@@ -145,6 +145,13 @@ const toDineroFormat = (n?: number | null) => Dinero({ amount: n || 0, currency:
 
 const getPathToTextFile = (directoriesAndFileName: string[]) => [process.cwd(), ...directoriesAndFileName].join('\\')
 
+const constructCompletionRoute = (testID: string) =>
+  windowExists()
+    ? `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}${Paths.results}${
+        Paths.upgradeComplete
+      }/${testID}`
+    : ''
+
 export const Utils = {
   stringOrNull,
   numberOrNull,
@@ -162,4 +169,5 @@ export const Utils = {
   toPercentage,
   toDineroFormat,
   getPathToTextFile,
+  constructCompletionRoute,
 }

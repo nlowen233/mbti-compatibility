@@ -85,11 +85,11 @@ const SIGMOID_WEIGHT = () => 1
 const TRUE = () => 'true'
 
 const explainResultsPromptTemplate = (user: User, scores: ScoreNode[], results: MBTIScoreData[]) =>
-  `Gender: ${user.gender || 'null'}\nAge: ${user.age || 'null'}\nMBTI Type: ${
+  `Gender: ${user.gender || 'null'}\nAge: ${user.age || 'null'}\nMBTI type: ${
     user.mbtiType || 'null'
-  }\nExpected Most Compatible MBTI Type: ${user.expectedMbtiType || 'null'}\nscores:\n${
+  }\nUser's expected most compatible MBTI type (NOT THE USER'S ACTUAL MOST COMPATIBLE TYPE): ${user.expectedMbtiType || 'null'}\nscores:\n${
     scores ? JSON.stringify(scores) : 'null'
-  }\nresults:\n${results ? JSON.stringify(results) : 'null'}`
+  }\nresults:\n${results ? JSON.stringify([...results].sort((a, b) => b.compatibilityScore - a.compatibilityScore)) : 'null'}`
 
 const windowExists = () => typeof window === 'object' && window !== null
 

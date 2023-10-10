@@ -10,6 +10,7 @@ export const Mobile = ({ test, amountOfQuestions }: TestNodeProps) => {
   const { palette } = useTheme()
   const testFinished = test?.status === TestStatus.Finished
   const isUpgraded = test?.isUpgraded === TestUpgradeStatus.upgraded
+  const testIsAwaitingUpgrade = test?.isUpgraded === TestUpgradeStatus.successfullyPurchasedWaitingForGPT
   const getCompletionScore = () => {
     if (testFinished) {
       return 1
@@ -96,16 +97,25 @@ export const Mobile = ({ test, amountOfQuestions }: TestNodeProps) => {
           ))}
         </div>
       </Box>
-      <div>
-        <Button variant="contained" href={testFinished ? `${Paths.results}/${test.id}` : Paths.test} fullWidth style={{ marginTop: 10 }}>
-          {buttonText}
-        </Button>
-        {testFinished && !isUpgraded && (
-          <Button variant="outlined" href={`${Paths.results}/upgrade/${test.id}`} fullWidth style={{ marginTop: 20 }}>
-            Get Full Analysis
+      {!testIsAwaitingUpgrade ? (
+        <div>
+          <Button variant="contained" href={testFinished ? `${Paths.results}/${test.id}` : Paths.test} fullWidth style={{ marginTop: 10 }}>
+            {buttonText}
           </Button>
-        )}
-      </div>
+          {testFinished && !isUpgraded && (
+            <Button variant="outlined" href={`${Paths.results}/upgrade/${test.id}`} fullWidth style={{ marginTop: 20 }}>
+              Get Full Analysis
+            </Button>
+          )}
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <CircularProgress />
+          <Typography variant="subtitle1" fontStyle={'italic'}>
+            Awaiting Full Results
+          </Typography>
+        </div>
+      )}
     </Box>
   )
 }

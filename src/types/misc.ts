@@ -1,4 +1,6 @@
 import { LocalTextPaths } from '@/misc/LocalTextPaths'
+import { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions.mjs'
+import { ChatCompletionMessageParam } from 'openai/resources/chat/index.mjs'
 import { Scores } from './SQLTypes'
 
 export type Option<T extends string | number> = { value: T; display: string }
@@ -82,7 +84,24 @@ export type AnalystResponse = {
 
 export type GetGPTEssayParams = {
   introPromptKey: keyof typeof LocalTextPaths
-  dataExplainedPropmptKey: keyof typeof LocalTextPaths
+  dataExplainedPromptKey: keyof typeof LocalTextPaths
   userDataPrompt: string
   essayPromptKey: keyof typeof LocalTextPaths
+}
+
+export type ExecuteConversationParams = {
+  initialConversation: ChatCompletionMessageParam[]
+  nextChats: ChatCompletionMessageParam[]
+} & NextConversationSettings
+
+export type GetNextGPTParams = {
+  conversationArray: ChatCompletionMessageParam[]
+  nextChat: ChatCompletionMessageParam
+} & NextConversationSettings
+
+export type NextConversationSettings = {
+  initialBackoff?: number
+  expGrowthRate?: number
+  model?: ChatCompletionCreateParamsBase['model']
+  maxAttempts?: number
 }

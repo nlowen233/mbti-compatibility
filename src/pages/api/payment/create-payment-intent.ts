@@ -3,8 +3,7 @@ import { SQL } from '@/misc/SQL'
 import { SQLQueries } from '@/misc/SQLQueries'
 import { SQLResult } from '@/types/SQLTypes'
 import { APIRes, StripeMetadata, TestIDReq } from '@/types/misc'
-import { withApiAuthRequired } from '@auth0/nextjs-auth0'
-import { Session, getSession } from '@auth0/nextjs-auth0/edge'
+import { Session, getSession, withApiAuthRequired } from '@auth0/nextjs-auth0'
 import { VercelPoolClient, db } from '@vercel/postgres'
 import { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
@@ -45,9 +44,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse<APIRes<string>>
   if (dbError || !client) {
     return res.status(500).send({ err: true, message: dbError, res: null })
   }
+
   const sqlRes = await SQL.query<SQLResult>(client, SQLQueries.isTestValidToUpgrade(testID, userID))
   if (sqlRes.err) {
-    return res.status(500).send({ err: true, message: sqlRes.message || Constants.unknownSQLError, res: null })
+    return res
+      .status(500)
+      .send({ err: true, message: `Error executing SQL Query: ${sqlRes.message || Constants.unknownSQLError}`, res: null })
   }
   const resultRow = sqlRes.res?.length ? sqlRes.res[0] : undefined
   if (!resultRow?.result) {

@@ -38,7 +38,7 @@ export const MobileResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps) 
         {page === 1 &&
           (isUpgraded ? (
             <>
-              <div style={{ maxWidth: 800 }}>
+              <div style={{ maxWidth: 800, overflowX: 'hidden' }}>
                 <Element name={CATEGORY_TITLES[0]}>
                   <Typography style={sectionTitleStyles} variant="h4">
                     {CATEGORY_TITLES[0]}
@@ -113,7 +113,7 @@ export const MobileResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps) 
           ) : (
             <Summary
               summary={test?.gptResponse}
-              containerStyle={{ maxWidth: 800, paddingBottom: 100 }}
+              containerStyle={{ maxWidth: 800, paddingBottom: 100, overflowX: 'hidden' }}
               ctaHref={ctaHref}
               ctaText={ctaText}
             />
@@ -138,11 +138,11 @@ export const MobileResultsView = ({ ctaHref, ctaText, test }: ResultsViewProps) 
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-          <Button onClick={() => setPage(0)} disabled={page === 0}>
-            <Typography variant="h5">Results</Typography>
-          </Button>
           <Button onClick={() => setPage(1)} disabled={page === 1}>
             <Typography variant="h5">Summary</Typography>
+          </Button>
+          <Button onClick={() => setPage(0)} disabled={page === 0}>
+            <Typography variant="h5">Results</Typography>
           </Button>
         </div>
       </Box>
