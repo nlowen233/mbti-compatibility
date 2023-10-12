@@ -2,6 +2,7 @@ import { Head } from '@/components/Head'
 import { MainWrapper } from '@/components/MainWrapper'
 import { PopUpContext } from '@/contexts/PopUpContext'
 import { API } from '@/misc/API'
+import { Paths } from '@/misc/Paths'
 import { CircularProgress, Typography } from '@mui/material'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
@@ -27,7 +28,7 @@ export default function UpgradeComplete() {
     }
     const isComplete = await API.checkIsTestUpgradeComplete({ id: testID })
     if (isComplete.res) {
-      //router.push(`${Paths.results}/${testID}`)
+      router.push(`${Paths.results}/${testID}`)
     } else if (isComplete.err) {
       setRedirectFailed(true)
       pushPopUpMessage({
