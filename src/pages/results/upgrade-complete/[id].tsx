@@ -4,6 +4,7 @@ import { PopUpContext } from '@/contexts/PopUpContext'
 import { API } from '@/misc/API'
 import { Paths } from '@/misc/Paths'
 import { CircularProgress, Typography } from '@mui/material'
+import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { useContext, useEffect, useState } from 'react'
 
@@ -12,11 +13,22 @@ const FUNC_RUN_LIMIT = 50
 const STRIPE_SUCCESS = 'succeeded'
 const FAILURE_REDIRECT_TIME_IN_SEC = 10
 
-export default function UpgradeComplete() {
+type Props = {
+  successfulPurchase: boolean
+}
+
+export const getServerSideProps: GetServerSideProps<Props> = async ({ query }) => {
+  return {
+    props: {
+      successfulPurchase: query.redirect_status === STRIPE_SUCCESS,
+    },
+  }
+}
+
+export default function UpgradeComplete({ successfulPurchase }: Props) {
   const { pushPopUpMessage } = useContext(PopUpContext)
   const router = useRouter()
   const testID = router.query.id as string | undefined
-  const successfulPurchase = router.query.redirect_status === STRIPE_SUCCESS
   const [initRender, setInitRender] = useState(true)
   const [redirectFailed, setRedirectFailed] = useState(false)
   const [execCount, setExecCount] = useState(0)
