@@ -1,12 +1,14 @@
-import { Utils } from './Utils'
+import path from 'path'
+
+const getPathToTextFile = (directoriesAndFileName: string[]) => path.join(process.cwd(), ...directoriesAndFileName)
 
 export const LocalTextPaths = {
-  introPrompt: Utils.getPathToTextFile(['prompts', 'personalities', 'analyst', 'introduction.txt']),
-  dataExplainedPrompt: Utils.getPathToTextFile(['prompts', 'personalities', 'analyst', 'data-explained.txt']),
-  aboutTopMatchPrompt: Utils.getPathToTextFile(['prompts', 'essays', 'about-your-top-match.txt']),
-  conclusionPrompt: Utils.getPathToTextFile(['prompts', 'essays', 'conclusion.txt']),
-  topCogFuncPrompt: Utils.getPathToTextFile(['prompts', 'essays', 'top-cognitive-function.txt']),
-  whatYouExpectedPrompt: Utils.getPathToTextFile(['prompts', 'essays', 'what-you-expected.txt']),
-  whereToFindPrompt: Utils.getPathToTextFile(['prompts', 'essays', 'where-to-find.txt']),
-  freeTierPrompt: Utils.getPathToTextFile(['prompts', 'essays', 'free-tier.txt']),
+  introPrompt: path.join(process.cwd(), 'prompts', 'personalities', 'analyst', 'introduction.txt'),
+  dataExplainedPrompt: path.join(process.cwd(), 'prompts', 'personalities', 'analyst', 'data-explained.txt'),
+  aboutTopMatchPrompt: path.join(process.cwd(), 'prompts', 'essays', 'about-your-top-match.txt'),
+  conclusionPrompt: path.join(process.cwd(), 'prompts', 'essays', 'conclusion.txt'),
+  topCogFuncPrompt: path.join(process.cwd(), 'prompts', 'essays', 'top-cognitive-function.txt'),
+  whatYouExpectedPrompt: path.join(process.cwd(), 'prompts', 'essays', 'what-you-expected.txt'),
+  whereToFindPrompt: path.join(process.cwd(), 'prompts', 'essays', 'where-to-find.txt'),
+  freeTierPrompt: path.join(process.cwd(), 'prompts', 'essays', 'free-tier.txt'),
 }

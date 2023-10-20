@@ -1,7 +1,6 @@
 import { Head } from '@/components/Head'
 import { MainWrapper } from '@/components/MainWrapper'
 import { PopUpContext } from '@/contexts/PopUpContext'
-import { useMountlessEffect } from '@/hooks/useMountlessEffect'
 import { API } from '@/misc/API'
 import { Paths } from '@/misc/Paths'
 import { CircularProgress, Typography } from '@mui/material'
@@ -10,7 +9,7 @@ import { useContext, useEffect, useState } from 'react'
 
 const FUNC_RUN_INTERVAL_IN_SEC = 10
 const FUNC_RUN_LIMIT = 50
-const STRIPE_SUCCESS = 'successful'
+const STRIPE_SUCCESS = 'succeeded'
 const FAILURE_REDIRECT_TIME_IN_SEC = 10
 
 export default function UpgradeComplete() {
@@ -29,7 +28,7 @@ export default function UpgradeComplete() {
     }
     const isComplete = await API.checkIsTestUpgradeComplete({ id: testID })
     if (isComplete.res) {
-      //router.push(`${Paths.results}/${testID}`)
+      router.push(`${Paths.results}/${testID}`)
     } else if (isComplete.err) {
       setRedirectFailed(true)
       pushPopUpMessage({
@@ -64,19 +63,6 @@ export default function UpgradeComplete() {
     }
   }, [execCount])
 
-  useMountlessEffect(() => {
-    if (initRender) {
-      return
-    }
-    let timeout: NodeJS.Timeout | undefined
-    if (!successfulPurchase) {
-      timeout = setTimeout(() => router.push(`${Paths.tests}/all`), FAILURE_REDIRECT_TIME_IN_SEC * 1000)
-    }
-    return () => {
-      !!timeout && clearTimeout(timeout)
-    }
-  }, [successfulPurchase, initRender])
-
   useEffect(() => {
     if (initRender) {
       setInitRender(false)
@@ -97,16 +83,16 @@ export default function UpgradeComplete() {
             minHeight: 600,
           }}
         >
-          <Typography variant="h1" textAlign={'center'} paddingBottom={2}>
+          <Typography variant="h1" textAlign={'center'} paddingBottom={4}>
             {successfulPurchase ? `Your purchase was a success!` : `Your purchase failed, please contact support if this issue persists`}
           </Typography>
           <CircularProgress />
-          <Typography variant="body1" textAlign={'center'} paddingTop={1}>
+          <Typography variant="body1" textAlign={'center'} paddingTop={2} style={{ maxWidth: 800 }}>
             {successfulPurchase
               ? `You will be redirected to your upgraded test results when they are ready! This usually takes about 5-10 minutes, otherwise you
-            can find your test in "M Tests". If you experience any issues please contact our support team using the support link under
+            can find your test in "My Tests". If you experience any issues please contact our support team using the support link under
             the gear icon.`
-              : `You will be redirected back to the your "My Tests" page`}
+              : `Sorry about this, please give it another try!`}
           </Typography>
         </div>
       </MainWrapper>
