@@ -11,43 +11,13 @@ const openai = new _OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
 
-const getResultsExplanation = async (user: User, scores: ScoreNode[], results: MBTIScoreData[]): Promise<APIRes<ChatCompletion>> => {
-  let res: ChatCompletion | undefined
-  let error
-  const systemPromptRes = await readLocalTextFile('freeTierPrompt')
-  if (systemPromptRes.err || !systemPromptRes.res) {
-    return {
-      err: true,
-      message: 'There was an error reading the prompt file from local storage',
-    }
-  }
-  try {
-    res = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        {
-          role: 'system',
-          content: systemPromptRes.res,
-        },
-        {
-          role: 'user',
-          content: Constants.explainResultsPromptTemplate(user, scores, results),
-        },
-      ],
-      temperature: 0.61,
-      max_tokens: 1024,
-      top_p: 1,
-      frequency_penalty: 0.43,
-      presence_penalty: 0.2,
-    })
-  } catch (err) {
-    error = err
-  }
-  return {
-    message: error as string,
-    res,
-    err: !!error,
-  }
+const getResultsExplanation = async (user: User, scores: ScoreNode[], results: MBTIScoreData[]): Promise<APIRes<string>> => {
+  return await getEssay({
+    dataExplainedPromptKey: 'dataExplainedPrompt',
+    introPromptKey: 'introPrompt',
+    essayPromptKey: 'freeTierPrompt',
+    userDataPrompt: Constants.explainResultsPromptTemplate(user, scores, results),
+  })
 }
 
 const getAnalystFullExplanation = async (user: User, scores: ScoreNode[], results: MBTIScoreData[]): Promise<APIRes<AnalystResponse>> => {

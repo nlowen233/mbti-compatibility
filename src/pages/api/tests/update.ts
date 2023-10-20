@@ -66,7 +66,7 @@ export default withApiAuthRequired(async function handler(req: NextApiRequest, r
             ),
           )
         } else {
-          updatedTest.gptResponse = gptRes.res?.choices[0].message.content || undefined
+          updatedTest.gptResponse = gptRes.res || undefined
         }
       }
     }
